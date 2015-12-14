@@ -320,10 +320,9 @@ Prerequisites
 - `lambda expression`_
 - closures_
 
-.. _property function: https://docs.python.org/2/library/functions.html#property
 .. _eval function: https://docs.python.org/2/library/functions.html#eval
 .. _lambda expression: https://docs.python.org/2/tutorial/controlflow.html#lambda-expressions
-.. _closures: http://www.shutupandship.com/2012/01/python-closures-explained.html
+
 
 Steps
 `````

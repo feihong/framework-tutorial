@@ -414,7 +414,6 @@ Prerequisites
 - closures_
 - A `basic familiarity`_ with Tkinter
 
-.. _closures: http://www.shutupandship.com/2012/01/python-closures-explained.html
 .. _basic familiarity: http://effbot.org/tkinterbook/tkinter-index.htm#introduction
 
 Steps
