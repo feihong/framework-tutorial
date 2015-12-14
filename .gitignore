@@ -1,0 +1,4 @@
+_build
+*.pyc
+.svn
+.DS_Store
