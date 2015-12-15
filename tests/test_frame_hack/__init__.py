@@ -1,4 +1,9 @@
 def setup():
-    import sys, os
-    from os import path as op
-    sys.path.append(op.join(op.dirname(__file__), '..', '..', 'Frame Hack'))
+    import sys
+    from pathlib2 import Path
+
+    path1 = Path(__file__).parent.parent.parent / 'framehack/interpolate/solutions'
+    sys.path.append(str(path1))
+
+    path2 = Path(__file__).parent.parent.parent / 'framehack/wrapper/solutions'
+    sys.path.append(str(path2))
