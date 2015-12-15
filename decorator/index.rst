@@ -432,6 +432,6 @@ Be nice to the decorated function
 ---------------------------------
 If you return a new function in place of an old one, you run the risk of confusing something else in the program that expected attributes from the original function.  For example, if you use a discovery based test runner that looks for methods prefixed with "test" then you will need to copy the ``func.__name__`` attribute in your decorated function.  In Python 2.5, the builtin ``@functools.wraps(func)`` is a decorator that returns a function to *look* like ``func`` and is meant to solve this problem.
 
-:doc:`Exercises <exercises>`
+:doc:`exercises`
 
 :doc:`Go Back <../index>`

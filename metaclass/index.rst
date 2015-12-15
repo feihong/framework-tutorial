@@ -364,6 +364,6 @@ Makes a mess of your code
 -------------------------
 Excessive use of metaclasses can make your code harder to read and maintain. If you can achieve equivalent results using simpler approaches such as inheritance or frame hacks, use them instead.
 
-:doc:`Exercises <exercises>`
+:doc:`exercises`
 
 :doc:`Go Back <../index>`

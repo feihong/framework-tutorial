@@ -351,6 +351,6 @@ Metaclasses are more flexible
 -----------------------------
 Many frame hacks scenarios, particularly those that work with classes, can be substituted by metaclasses. Metaclasses are more difficult to use, but also more powerful. We'll take a close look at metaclasses in another section of this tutorial.
 
-:doc:`Exercises <exercises>`
+:doc:`exercises`
 
 :doc:`Go Back <../index>`
