@@ -1,0 +1,61 @@
+2/3/2008
+
+- first half lecture, second half exercises ("kata")
+- todo: clean up rst section formatting
+- hand out should contain basic points for lecture, actual content of slides (as markers), and detailed instructions for exercises
+- todo: using rst to create s5-compatible slides (div class "slide") for lecture
+- todo: zip file of all material.  html links to source code.  this should be the same as the printed handout?
+- todo: Kumar needs to get with Leapfroggers to decide on date for dry run of tutorial
+- decided against assigned seating
+- Getting Started sections should be coded live, but not from scratch, and this needs more experimentation
+- todo: experiment with using doctests as primers for exercises.  may or may not work.  what to about GUI?
+- todo: doctests for integrity of example code - how do we do this?
+- todo: add howto for pdb, traceback, bit operators?
+
+3/8/2008
+
+- move Getting Started in front of use cases
+- intro to pdb
+- alternate explanations of metaclasses?
+- explanation of the python stack?
+- luke: mention functools.wraps
+- metaclasses: gobot vs. transformer (class collisions)
+- luke: decorators: making the closure-ness explicit.
+- tell people to run the code in their own editor / terminal as we are
+- mention that code samples in recipes assume you have already completed the recipes
+
+For live demo:
+- not running step 0 in recipes, running and completing step 1
+- skipping recipe #2 in each section
+
+Frame Hacks
+- getting started 1, no need to run this
+- getting started 2, yes, run this
+- getting started 3, no need to run this
+
+Decorators:
+- getting started 1, comment out @decorator
+- getting started 2, also comment out @decorator
+- getting started 3, also comment out @decorator, and maybe write 2.3 decorator style
+- getting started 4, no need to run this
+- getting started 5, no need to run this
+
+Metaclasses
+- getting started 1, no need to run this
+- getting started 2, need to copy/paste both sections and run
+
+Magic Methods
+- getting started 1, no need to run this
+- getting started 2, no need to run this
+- getting started 3, skipping this one
+- getting started 4, skipping this one
+
+Presentation Day Checklist
+- bottled water, or pitcher
+- macbook, projector dongle
+- Feihong's laptop
+- USB keychain drive
+- HTML uploaded to farmdev.com
+- HTML uploaded to Google Code, with links to farmdev.com
+- ask Terry for laser pointer?
+- set up screen environment (Textmate, iTerm, Safari), make project in TextMate, quit Google Notifier
