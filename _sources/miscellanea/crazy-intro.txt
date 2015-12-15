@@ -52,10 +52,10 @@ Sections
 .. toctree::
    :maxdepth: 1
 
-   framehack/index
-   decorator/index
-   metaclass/index
-   magicmethod/index
+   ../framehack/index
+   ../decorator/index
+   ../metaclass/index
+   ../magicmethod/index
 
 Useless Epilogue
 ----------------
