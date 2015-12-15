@@ -71,5 +71,3 @@ To get used to pdb and what it can do, run the following code and try out the va
         sum += i
 
     print sum
-
-You can also read a :doc:`longer, crazier version of this intro <crazy-intro>`.

@@ -11,6 +11,7 @@ Contents:
    decorator/index
    metaclass/index
    magicmethod/index
+   miscellanea/index
 
 Indices and tables
 ==================
