@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Magic Method Recipe: Building Tkinter Interfaces &mdash; Secrets of the Framework Creators 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/tutorial.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Secrets of the Framework Creators 0.1 documentation" href="../../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Secrets of the Framework Creators
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../framehack/index.html">Frame Hacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../decorator/index.html">Decorators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metaclass/index.html">Metaclasses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Magic Methods</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Secrets of the Framework Creators</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+    <li>Magic Method Recipe: Building Tkinter Interfaces</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/magicmethod/tkinter/step2.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="magic-method-recipe-building-tkinter-interfaces">
+<h1>Magic Method Recipe: Building Tkinter Interfaces<a class="headerlink" href="#magic-method-recipe-building-tkinter-interfaces" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="step-2">
+<h2>Step 2<a class="headerlink" href="#step-2" title="Permalink to this headline">¶</a></h2>
+<p>We still have not succeeded at making Tkinter layout not suck. That is because we still have to specify which side to pack each widget. Instead, it would be nice to have widget containers that know which side to pack their child widgets on:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Pack everything from the top</span>
+<span class="n">frame</span> <span class="o">=</span> <span class="n">VFrame</span> <span class="p">[</span>
+    <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;One&#39;</span><span class="p">),</span>
+    <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Two&#39;</span><span class="p">),</span>
+    <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Tree&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Implement the <code class="docutils literal"><span class="pre">ContainerWrapper</span></code> class to accomodate this functionality.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">Tkinter</span> <span class="kn">as</span> <span class="nn">tk</span>
+
+<span class="k">class</span> <span class="nc">TkWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cls</span> <span class="o">=</span> <span class="n">cls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">create_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cls</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">widget</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">widget</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">wrapper</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">wrapper</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="k">class</span> <span class="nc">ContainerWrapper</span><span class="p">(</span><span class="n">TkWrapper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implement this class&quot;&quot;&quot;</span>
+
+<span class="n">Button</span> <span class="o">=</span> <span class="n">TkWrapper</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">)</span>
+<span class="n">Label</span> <span class="o">=</span> <span class="n">TkWrapper</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">)</span>
+<span class="n">HFrame</span> <span class="o">=</span> <span class="n">ContainerWrapper</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">,</span> <span class="n">tk</span><span class="o">.</span><span class="n">LEFT</span><span class="p">)</span>
+<span class="n">VFrame</span> <span class="o">=</span> <span class="n">ContainerWrapper</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">,</span> <span class="n">tk</span><span class="o">.</span><span class="n">TOP</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">VFrame</span> <span class="p">[</span>
+        <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;One&#39;</span><span class="p">),</span>
+        <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Two&#39;</span><span class="p">),</span>
+        <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Tree&#39;</span><span class="p">),</span>
+
+        <span class="n">HFrame</span> <span class="p">[</span>
+            <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Apple&#39;</span><span class="p">),</span>
+            <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Banana&#39;</span><span class="p">),</span>
+            <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Cranberry&#39;</span><span class="p">),</span>
+        <span class="p">],</span>
+
+        <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Durian&#39;</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">frame</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&#39;A Cool Tkinter Example&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<img alt="../../_images/tkinter-screenshot1.png" src="../../_images/tkinter-screenshot1.png" />
+<div class="hintlist hidden">
+<h2>Hints</h2><ol class="arabic">
+<li><p class="first">You can reuse a lot of code from the solution to the previous step.</p>
+</li>
+<li><p class="first">You will use the following line in your solution:  <code class="docutils literal"><span class="pre">def</span> <span class="pre">__init__(self,</span> <span class="pre">cls,</span> <span class="pre">side):</span></code>.</p>
+</li>
+<li><p class="first">This is what your <code class="docutils literal"><span class="pre">__init__</span></code> method should look like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="n">side</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">ContainerWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">side</span> <span class="o">=</span> <span class="n">side</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">The <code class="docutils literal"><span class="pre">create_widget</span></code> method needs to take advantage of the <code class="docutils literal"><span class="pre">self.side</span></code> attribute.</p>
+</li>
+<li><p class="first">You will use the following line in your solution: <code class="docutils literal"><span class="pre">childwidget.pack(side=self.side,</span> <span class="pre">padx=5,</span> <span class="pre">pady=5)</span></code>.</p>
+</li>
+</ol>
+</div><p>Solution: <a class="reference download internal" href="../../_downloads/tkinter21.py"><code class="xref download docutils literal"><span class="pre">solutions/tkinter2.py</span></code></a></p>
+<p><a class="reference internal" href="../index.html"><em>Go back</em></a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/tutorial.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

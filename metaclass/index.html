@@ -1,0 +1,619 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Metaclasses &mdash; Secrets of the Framework Creators 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/tutorial.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Secrets of the Framework Creators 0.1 documentation" href="../index.html"/>
+        <link rel="next" title="Magic Methods" href="../magicmethod/index.html"/>
+        <link rel="prev" title="Decorators" href="../decorator/index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Secrets of the Framework Creators
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../framehack/index.html">Frame Hacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../decorator/index.html">Decorators</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Metaclasses</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-a-metaclass">What is a Metaclass?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-python-normally-creates-class-objects">How Python normally creates class objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introducing-the-metaclass-magic-variable">Introducing the __metaclass__ magic variable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distinguishing-different-types-of-class-members">Distinguishing different types of class members</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases">Use Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generate-attributes-django">Generate attributes (Django)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modify-class-attributes">Modify class attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transform-methods-and-properties">Transform methods and properties</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#recipes">Recipes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#automatic-debugger-methods">Automatic Debugger Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#steps">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#generating-bitfield-properties">Generating Bitfield Properties</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Steps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#metaclass-caveats">Metaclass Caveats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#not-as-easy-to-use-as-frame-hacks">Not as easy to use as frame hacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#might-generate-extra-classes">Might generate extra classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#makes-a-mess-of-your-code">Makes a mess of your code</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../magicmethod/index.html">Magic Methods</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Secrets of the Framework Creators</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Metaclasses</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/metaclass/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="metaclasses">
+<h1>Metaclasses<a class="headerlink" href="#metaclasses" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#what-is-a-metaclass" id="id3">What is a Metaclass?</a></li>
+<li><a class="reference internal" href="#how-python-normally-creates-class-objects" id="id4">How Python normally creates class objects</a></li>
+<li><a class="reference internal" href="#getting-started" id="id5">Getting Started</a><ul>
+<li><a class="reference internal" href="#introducing-the-metaclass-magic-variable" id="id6">Introducing the __metaclass__ magic variable</a></li>
+<li><a class="reference internal" href="#distinguishing-different-types-of-class-members" id="id7">Distinguishing different types of class members</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#use-cases" id="id8">Use Cases</a><ul>
+<li><a class="reference internal" href="#generate-attributes-django" id="id9">Generate attributes (Django)</a></li>
+<li><a class="reference internal" href="#modify-class-attributes" id="id10">Modify class attributes</a></li>
+<li><a class="reference internal" href="#transform-methods-and-properties" id="id11">Transform methods and properties</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#recipes" id="id12">Recipes</a><ul>
+<li><a class="reference internal" href="#automatic-debugger-methods" id="id13">Automatic Debugger Methods</a><ul>
+<li><a class="reference internal" href="#prerequisites" id="id14">Prerequisites</a></li>
+<li><a class="reference internal" href="#steps" id="id15">Steps</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#generating-bitfield-properties" id="id16">Generating Bitfield Properties</a><ul>
+<li><a class="reference internal" href="#id1" id="id17">Prerequisites</a></li>
+<li><a class="reference internal" href="#id2" id="id18">Steps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#metaclass-caveats" id="id19">Metaclass Caveats</a><ul>
+<li><a class="reference internal" href="#not-as-easy-to-use-as-frame-hacks" id="id20">Not as easy to use as frame hacks</a></li>
+<li><a class="reference internal" href="#might-generate-extra-classes" id="id21">Might generate extra classes</a></li>
+<li><a class="reference internal" href="#makes-a-mess-of-your-code" id="id22">Makes a mess of your code</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="what-is-a-metaclass">
+<h2><a class="toc-backref" href="#id3">What is a Metaclass?</a><a class="headerlink" href="#what-is-a-metaclass" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>A metaclass is like a decorator but for classes</li>
+<li>Specifically, a metaclass is a class that creates a class</li>
+<li>It&#8217;s a class that gets invoked when it&#8217;s assigned to the magic attribute <code class="docutils literal"><span class="pre">__metaclass__</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="how-python-normally-creates-class-objects">
+<h2><a class="toc-backref" href="#id4">How Python normally creates class objects</a><a class="headerlink" href="#how-python-normally-creates-class-objects" title="Permalink to this headline">¶</a></h2>
+<p>In Python code you create a class with the class keyword:</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Fred</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">hair_color</span> <span class="o">=</span> <span class="s">&#39;brown&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">Fred</span><span class="p">)</span>
+<span class="go">&lt;type &#39;type&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Fred</span><span class="o">.</span><span class="n">__name__</span>
+<span class="go">&#39;Fred&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Fred</span><span class="o">.</span><span class="n">hair_color</span>
+<span class="go">&#39;brown&#39;</span>
+</pre></div>
+</div>
+<p>Here is an equivalent to what Python did behind the scenes:</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Fred</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s">&#39;Fred&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">object</span><span class="p">,),</span> <span class="p">{</span><span class="s">&#39;hair_color&#39;</span><span class="p">:</span><span class="s">&#39;brown&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">Fred</span><span class="p">)</span>
+<span class="go">&lt;type &#39;type&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Fred</span><span class="o">.</span><span class="n">__name__</span>
+<span class="go">&#39;Fred&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Fred</span><span class="o">.</span><span class="n">hair_color</span>
+<span class="go">&#39;brown&#39;</span>
+</pre></div>
+</div>
+<p>Declaring <code class="docutils literal"><span class="pre">__metaclass__</span></code> allows you to customize class creation by overriding the default behavior of <code class="docutils literal"><span class="pre">type()</span></code>.</p>
+</div>
+<div class="section" id="getting-started">
+<h2><a class="toc-backref" href="#id5">Getting Started</a><a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="introducing-the-metaclass-magic-variable">
+<h3><a class="toc-backref" href="#id6">Introducing the __metaclass__ magic variable</a><a class="headerlink" href="#introducing-the-metaclass-magic-variable" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">__printer__</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">classname</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classDict</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;Name            Type                 Value&#39;</span>
+        <span class="k">print</span> <span class="s">&#39;-------------   ------------------   ---------------------------&#39;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">classDict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">print</span> <span class="s">&#39;</span><span class="si">%-15s</span><span class="s"> </span><span class="si">%-20s</span><span class="s"> </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">type</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">classname</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classDict</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">__printer__</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">47</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s">&#39;raspberry&#39;</span>
+    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>Name            Type                 Value
+-------------   ------------------   ---------------------------
+a               &lt;type &#39;int&#39;&gt;         47
+__module__      &lt;type &#39;str&#39;&gt;         &#39;__main__&#39;
+b               &lt;type &#39;str&#39;&gt;         &#39;raspberry&#39;
+__metaclass__   &lt;type &#39;type&#39;&gt;        &lt;class &#39;__main__.__test__&#39;&gt;
+d               &lt;type &#39;property&#39;&gt;    &lt;property object at 0x01A75850&gt;
+c               &lt;type &#39;function&#39;&gt;    &lt;function c at 0x01A17F30&gt;
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">__test__</span></code> metaclass prints out the members of its target classes. To make <code class="docutils literal"><span class="pre">__test__</span></code> the metaclass of <code class="docutils literal"><span class="pre">Test</span></code>, we have to use the <code class="docutils literal"><span class="pre">__metaclass__</span></code> magic variable.</p>
+<p>All metaclasses inherit from class <code class="docutils literal"><span class="pre">type</span></code>. In most cases, you should override the <code class="docutils literal"><span class="pre">__new__</span></code> magic method to modify the elements of the <code class="docutils literal"><span class="pre">classDict</span></code> argument.  Modifying <code class="docutils literal"><span class="pre">classDict</span></code> has the effect of adding or modifying members of a class.</p>
+<p>In most Python frameworks, metaclass usage is not explicit, because metaclasses are inherited by subclasses. This feature makes it easy to hide the metaclass machinery from your users. For example, Django&#8217;s <code class="docutils literal"><span class="pre">Model</span></code> class uses a metaclass called <code class="docutils literal"><span class="pre">ModelBase</span></code>. When you create models in Django, you inherit your model classes from <code class="docutils literal"><span class="pre">Model</span></code> and never have to explicitly use the <code class="docutils literal"><span class="pre">__metaclass__</span></code> attribute.</p>
+</div>
+<div class="section" id="distinguishing-different-types-of-class-members">
+<h3><a class="toc-backref" href="#id7">Distinguishing different types of class members</a><a class="headerlink" href="#distinguishing-different-types-of-class-members" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">isfunction</span><span class="p">,</span> <span class="n">isdatadescriptor</span><span class="p">,</span> <span class="n">isclass</span>
+
+<span class="k">def</span> <span class="nf">separate_members</span><span class="p">(</span><span class="n">classDict</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">methods</span><span class="o">=</span><span class="p">[],</span> <span class="n">properties</span><span class="o">=</span><span class="p">[],</span> <span class="n">other</span><span class="o">=</span><span class="p">[])</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">classDict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">isfunction</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="s">&#39;methods&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">isdatadescriptor</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="s">&#39;properties&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">isclass</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="s">&#39;other&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">d</span>
+</pre></div>
+</div>
+<p>Function <code class="docutils literal"><span class="pre">separate_members</span></code> shows you how to distinguish between methods, properties, and all other attributes from inside the metaclass. Note that methods defined in the target class appear as functions to the metaclass, hence we use <code class="docutils literal"><span class="pre">isfunction</span></code> instead of <code class="docutils literal"><span class="pre">ismethod</span></code>. Although we chose to use the <code class="docutils literal"><span class="pre">inspect</span></code> module for this example, it&#8217;s possible to achieve equivalent functionality with the <code class="docutils literal"><span class="pre">isinstance</span></code> built-in function in conjunction with the <code class="docutils literal"><span class="pre">types</span></code> module.</p>
+<p>Now to make use of the <code class="docutils literal"><span class="pre">separate_members</span></code> function we defined above:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">__printer__</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">classname</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classDict</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">separate_members</span><span class="p">(</span><span class="n">classDict</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">print</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">:&#39;</span> <span class="o">%</span> <span class="n">k</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&#39;- </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
+            <span class="k">print</span> <span class="s">&#39;-&#39;</span><span class="o">*</span><span class="mi">80</span>
+
+        <span class="k">return</span> <span class="nb">type</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">classname</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classDict</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">__printer__</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">47</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s">&#39;raspberry&#39;</span>
+    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="mf">45.67</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">25</span><span class="p">]</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">None</span>
+    <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>other:
+- a
+- __module__
+- b
+- f
+- e
+--------------------------------------------------------------------------------
+properties:
+- d
+- i
+--------------------------------------------------------------------------------
+methods:
+- g
+- h
+- c
+--------------------------------------------------------------------------------
+</pre></div>
+</div>
+<p>We make use of the <code class="docutils literal"><span class="pre">separate_members</span></code> function we defined in the previous section to allow metaclass <code class="docutils literal"><span class="pre">__test__</span></code> to print out the methods, descriptors, and other attributes of its target class.</p>
+</div>
+</div>
+<div class="section" id="use-cases">
+<h2><a class="toc-backref" href="#id8">Use Cases</a><a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="generate-attributes-django">
+<h3><a class="toc-backref" href="#id9">Generate attributes (Django)</a><a class="headerlink" href="#generate-attributes-django" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">Poll</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">question</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">maxlength</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">pub_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="s">&#39;date published&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Choice</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">poll</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Poll</span><span class="p">)</span>
+    <span class="n">choice</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">maxlength</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">votes</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This example was extracted from the <a class="reference external" href="http://www.djangoproject.com/documentation/tutorial01/">official Django tutorial</a>. The <code class="docutils literal"><span class="pre">Model</span></code> class uses a metaclass that generates additional attributes. For example, <code class="docutils literal"><span class="pre">Poll</span></code> objects have attributes <code class="docutils literal"><span class="pre">choice_set</span></code> and <code class="docutils literal"><span class="pre">objects</span></code> that were generated based on the declared class attributes.</p>
+</div>
+<div class="section" id="modify-class-attributes">
+<h3><a class="toc-backref" href="#id10">Modify class attributes</a><a class="headerlink" href="#modify-class-attributes" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">GoBot</span><span class="p">(</span><span class="n">Robot</span><span class="p">):</span>
+    <span class="n">head</span>      <span class="o">=</span> <span class="n">Appendage</span><span class="p">()</span>
+    <span class="n">left_arm</span>  <span class="o">=</span> <span class="n">Appendage</span><span class="p">()</span>
+    <span class="n">right_arm</span> <span class="o">=</span> <span class="n">Appendage</span><span class="p">()</span>
+
+    <span class="n">cpu</span>            <span class="o">=</span> <span class="n">Component</span><span class="p">()</span>
+    <span class="n">matrix</span>         <span class="o">=</span> <span class="n">Component</span><span class="p">()</span>
+    <span class="n">flux_capacitor</span> <span class="o">=</span> <span class="n">Component</span><span class="p">()</span>
+
+<span class="k">print</span> <span class="n">GoBot</span><span class="o">.</span><span class="n">appendages</span>
+<span class="k">print</span> <span class="n">GoBot</span><span class="o">.</span><span class="n">components</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>[Appendage&lt;head&gt;, Appendage&lt;left_arm&gt;, Appendate&lt;right_arm&gt;]
+[Component&lt;cpu&gt;, Component&lt;matrix&gt;, Component&lt;flux_capacitor&gt;]
+</pre></div>
+</div>
+<p>Class <code class="docutils literal"><span class="pre">Robot</span></code> makes use of a metaclass (not shown) that causes all objects of type <code class="docutils literal"><span class="pre">Appendage</span></code> and <code class="docutils literal"><span class="pre">Component</span></code> to be added to the class attributes <code class="docutils literal"><span class="pre">appendages</span></code> and <code class="docutils literal"><span class="pre">components</span></code>, respectively.</p>
+</div>
+<div class="section" id="transform-methods-and-properties">
+<h3><a class="toc-backref" href="#id11">Transform methods and properties</a><a class="headerlink" href="#transform-methods-and-properties" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Transformer</span><span class="p">(</span><span class="n">Robot</span><span class="p">):</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">__timer__</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&quot;Transform into a GM vehicle of some kind&quot;</span>
+        <span class="c">#...</span>
+
+    <span class="k">def</span> <span class="nf">attack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="s">&quot;Attack something with robotic fury&quot;</span>
+        <span class="c">#...</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">Transformer</span><span class="p">()</span>
+<span class="n">t</span><span class="o">.</span><span class="n">transform</span><span class="p">()</span>
+<span class="n">t</span><span class="o">.</span><span class="n">attack</span><span class="p">(</span><span class="n">AdolfHitlerBot</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>Took 3.715 seconds to transform!
+Took 2.039 seconds to attack!
+</pre></div>
+</div>
+<p>Class <code class="docutils literal"><span class="pre">Transformer</span></code> uses metaclass <code class="docutils literal"><span class="pre">__timer__</span></code> (not shown), which transforms each of <code class="docutils literal"><span class="pre">Transformer</span></code>&#8216;s methods to print out the execution duration after the completion of each method.</p>
+</div>
+</div>
+<div class="section" id="recipes">
+<h2><a class="toc-backref" href="#id12">Recipes</a><a class="headerlink" href="#recipes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="automatic-debugger-methods">
+<h3><a class="toc-backref" href="#id13">Automatic Debugger Methods</a><a class="headerlink" href="#automatic-debugger-methods" title="Permalink to this headline">¶</a></h3>
+<p>This recipe shows you how you can focus your debugging on a specific class. In other words, have pdb run whenever any method of a class raises an exception.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">__debugger__</span>
+
+    <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="c"># exception if v == 0</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">/</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="c"># exception if len(args) != 2</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> is </span><span class="si">%s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="n">args</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+<span class="n">e</span> <span class="o">=</span> <span class="n">Example</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">e</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">e</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>       <span class="c"># enters debugger</span>
+</pre></div>
+</div>
+<p>In this recipe, we&#8217;ll explore how to transform all the methods of a class so that you automatically step into the debugger if and only if a method invocation triggers an error.</p>
+<div class="section" id="prerequisites">
+<h4><a class="toc-backref" href="#id14">Prerequisites</a><a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="http://www.shutupandship.com/2012/01/python-closures-explained.html">closures</a></li>
+</ul>
+</div>
+<div class="section" id="steps">
+<h4><a class="toc-backref" href="#id15">Steps</a><a class="headerlink" href="#steps" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference internal" href="debugger/step0.html"><em>Debugger Step 0</em></a></li>
+<li><a class="reference internal" href="debugger/step1.html"><em>Debugger Step 1</em></a></li>
+<li><a class="reference internal" href="debugger/step2.html"><em>Debugger Step 2</em></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="generating-bitfield-properties">
+<h3><a class="toc-backref" href="#id16">Generating Bitfield Properties</a><a class="headerlink" href="#generating-bitfield-properties" title="Permalink to this headline">¶</a></h3>
+<p>We&#8217;ve all had to deal with libraries that use bitfields. It&#8217;s especially common when dealing with wrapper libraries for C/C++ libraries. For this example, assume that we have a <code class="docutils literal"><span class="pre">Widget</span></code> class that has a bitfield attribute <code class="docutils literal"><span class="pre">style</span></code>. After using this class for a while, you&#8217;ve gotten tired of having to write code like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">w</span> <span class="o">=</span> <span class="n">Widget</span><span class="p">()</span>
+<span class="n">w</span><span class="o">.</span><span class="n">style</span> <span class="o">=</span> <span class="n">ENABLED</span> <span class="o">|</span> <span class="n">SUNKEN</span> <span class="o">|</span> <span class="n">TRANSPARENT</span>
+</pre></div>
+</div>
+<p>Instead, you wish you could just write code like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">w</span> <span class="o">=</span> <span class="n">Widget</span><span class="p">()</span>
+<span class="n">w</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">w</span><span class="o">.</span><span class="n">sunken</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">w</span><span class="o">.</span><span class="n">transparent</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>The obvious way to do this would be to modify <code class="docutils literal"><span class="pre">Widget</span></code> to have a bunch of properties that modify the <code class="docutils literal"><span class="pre">style</span></code> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Widget</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">style</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">enabled</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">&amp;</span> <span class="n">ENABLED</span><span class="p">),</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;style&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">|</span> <span class="n">ENABLED</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">^</span> <span class="n">ENABLED</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">simple</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">&amp;</span> <span class="n">SIMPLE</span><span class="p">),</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;style&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">|</span> <span class="n">SIMPLE</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">^</span> <span class="n">SIMPLE</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">sunken</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">&amp;</span> <span class="n">SUNKEN</span><span class="p">),</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;style&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">|</span> <span class="n">SUNKEN</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">^</span> <span class="n">SUNKEN</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">raised</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">&amp;</span> <span class="n">RAISED</span><span class="p">),</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;style&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">|</span> <span class="n">RAISED</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">^</span> <span class="n">RAISED</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">transparent</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">&amp;</span> <span class="n">TRANSPARENT</span><span class="p">),</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;style&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">|</span> <span class="n">TRANSPARENT</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">style</span> <span class="o">^</span> <span class="n">TRANSPARENT</span><span class="p">),</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>If you&#8217;re thinking &#8220;Gosh, it probably wasn&#8217;t fun to type all that&#8221;, you&#8217;d be totally right. Luckily for us, ever since Python 2.2 we&#8217;ve had a really good feature called metaclasses, which were created just for this kind of situation. Using a custom metaclass, we can rewrite the code like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Widget</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">__bitproperties__</span>
+    <span class="n">style</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">bit_properties</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;enabled&#39;</span><span class="p">,</span> <span class="s">&#39;simple&#39;</span><span class="p">,</span> <span class="s">&#39;sunken&#39;</span><span class="p">,</span> <span class="s">&#39;raised&#39;</span><span class="p">,</span> <span class="s">&#39;transparent&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Here&#8217;s another possible way to rewrite it, still using metaclasses:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Widget</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">__bitproperties__</span>
+    <span class="n">style</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">enabled</span>       <span class="o">=</span> <span class="n">bit_property</span><span class="p">(</span><span class="n">ENABLED</span><span class="p">)</span>
+    <span class="n">simple_border</span> <span class="o">=</span> <span class="n">bit_property</span><span class="p">(</span><span class="n">SIMPLE</span><span class="p">)</span>
+    <span class="n">sunken_border</span> <span class="o">=</span> <span class="n">bit_property</span><span class="p">(</span><span class="n">SUNKEN</span><span class="p">)</span>
+    <span class="n">raised_border</span> <span class="o">=</span> <span class="n">bit_property</span><span class="p">(</span><span class="n">RAISED</span><span class="p">)</span>
+    <span class="n">transparent_background</span> <span class="o">=</span> <span class="n">bit_property</span><span class="p">(</span><span class="n">TRANSPARENT</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h4><a class="toc-backref" href="#id17">Prerequisites</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Python&#8217;s <a class="reference external" href="https://docs.python.org/2/reference/expressions.html?highlight=bitwise#binary-bitwise-operations">binary bitwise operators</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/functions.html#property">property function</a></li>
+<li><a class="reference external" href="http://www.shutupandship.com/2012/01/python-closures-explained.html">closures</a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h4><a class="toc-backref" href="#id18">Steps</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference internal" href="bitfield/step0.html"><em>Bitfield Step 0</em></a></li>
+<li><a class="reference internal" href="bitfield/step1.html"><em>Bitfield Step 1</em></a></li>
+<li><a class="reference internal" href="bitfield/step2.html"><em>Bitfield Step 2</em></a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="metaclass-caveats">
+<h2><a class="toc-backref" href="#id19">Metaclass Caveats</a><a class="headerlink" href="#metaclass-caveats" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="not-as-easy-to-use-as-frame-hacks">
+<h3><a class="toc-backref" href="#id20">Not as easy to use as frame hacks</a><a class="headerlink" href="#not-as-easy-to-use-as-frame-hacks" title="Permalink to this headline">¶</a></h3>
+<p>Sometimes what you want to do can be achieved using either a metaclass or a frame hack. How do you choose which to use? When prototyping, always go with the frame hack since it requires less effort. However, if you need your production code to be highly portable, use metaclasses. How you want your API to look is another consideration. Frame hacks add a different kind of structure to class definitions, and that may make your API look more elegant from a user&#8217;s perspective.</p>
+</div>
+<div class="section" id="might-generate-extra-classes">
+<h3><a class="toc-backref" href="#id21">Might generate extra classes</a><a class="headerlink" href="#might-generate-extra-classes" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">__new__</span></code> method of a metaclass returns a new <code class="docutils literal"><span class="pre">type</span></code> object. Because of the way that Python&#8217;s import mechanism works, this may cause more than one class to be generated. In general, this shouldn&#8217;t be a problem. But it may be something you want to keep in mind.</p>
+</div>
+<div class="section" id="makes-a-mess-of-your-code">
+<h3><a class="toc-backref" href="#id22">Makes a mess of your code</a><a class="headerlink" href="#makes-a-mess-of-your-code" title="Permalink to this headline">¶</a></h3>
+<p>Excessive use of metaclasses can make your code harder to read and maintain. If you can achieve equivalent results using simpler approaches such as inheritance or frame hacks, use them instead.</p>
+<p><a class="reference internal" href="exercises.html"><em>Metaclass Exercises</em></a></p>
+<p><a class="reference internal" href="../index.html"><em>Go Back</em></a></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../magicmethod/index.html" class="btn btn-neutral float-right" title="Magic Methods" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../decorator/index.html" class="btn btn-neutral" title="Decorators" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/tutorial.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

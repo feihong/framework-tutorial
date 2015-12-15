@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Magic Method Recipe: HTML Generation &mdash; Secrets of the Framework Creators 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../_static/tutorial.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Secrets of the Framework Creators 0.1 documentation" href="../../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Secrets of the Framework Creators
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../framehack/index.html">Frame Hacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../decorator/index.html">Decorators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metaclass/index.html">Metaclasses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Magic Methods</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">Secrets of the Framework Creators</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+    <li>Magic Method Recipe: HTML Generation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../_sources/magicmethod/html/step3.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="magic-method-recipe-html-generation">
+<h1>Magic Method Recipe: HTML Generation<a class="headerlink" href="#magic-method-recipe-html-generation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="step-3">
+<h2>Step 3<a class="headerlink" href="#step-3" title="Permalink to this headline">¶</a></h2>
+<p>We want to go a little beyond Breve&#8217;s functionality, to the point where we can define our own tags. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">checkbox</span> <span class="o">=</span> <span class="n">Tag</span><span class="p">(</span><span class="s">&#39;input&#39;</span><span class="p">,</span> <span class="n">dojoType</span><span class="o">=</span><span class="s">&#39;dijit.form.CheckBox&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;checkbox&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When <code class="docutils literal"><span class="pre">str</span></code> is applied, the above tag produces the following HTML:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;input</span> <span class="na">dojoType=</span><span class="s">&quot;dijit.form.CheckBox&quot;</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="nt">/&gt;</span>
+</pre></div>
+</div>
+<p>What does that give us, exactly? For one thing, it lets us more easily take advantage of <a class="reference external" href="http://dojotoolkit.org/projects/dijit">Dijit</a>, a DHTML widget library.</p>
+<p>Implement the <code class="docutils literal"><span class="pre">Tag</span></code> class to support the proposed functionality. Note that the <code class="docutils literal"><span class="pre">dijit</span></code> function, which provides a template for Dijit-enabled pages, is already provided for you.</p>
+<p>Implement the <code class="docutils literal"><span class="pre">__call__</span></code> and <code class="docutils literal"><span class="pre">__getitem__</span></code> magic methods.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">webbrowser</span>
+
+<span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="c"># Implement this class</span>
+
+<span class="k">def</span> <span class="nf">dijit</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&quot;&quot;&quot;&lt;html&gt;&lt;head&gt;</span>
+<span class="s">&lt;title&gt;Dijit Generation Example&lt;/title&gt;</span>
+<span class="s">    &lt;style type=&quot;text/css&quot;&gt;</span>
+<span class="s">        @import &quot;http://o.aolcdn.com/dojo/1.0.0/dijit/themes/tundra/tundra.css&quot;;</span>
+<span class="s">        @import &quot;http://o.aolcdn.com/dojo/1.0.0/dojo/resources/dojo.css&quot;</span>
+<span class="s">    &lt;/style&gt;</span>
+<span class="s">    &lt;script type=&quot;text/javascript&quot; src=&quot;http://o.aolcdn.com/dojo/1.0.0/dojo/dojo.xd.js&quot;</span>
+<span class="s">        djConfig=&quot;parseOnLoad: true&quot;&gt;&lt;/script&gt;</span>
+<span class="s">    &lt;script type=&quot;text/javascript&quot;&gt;</span>
+<span class="s">        dojo.require(&quot;dijit.form.Button&quot;);</span>
+<span class="s">        dojo.require(&quot;dijit.form.CheckBox&quot;);</span>
+<span class="s">        dojo.require(&quot;dijit.form.TextBox&quot;);</span>
+<span class="s">        dojo.require(&quot;dijit.form.DateTextBox&quot;);</span>
+<span class="s">        dojo.require(&quot;dojo.parser&quot;);</span>
+<span class="s">    &lt;/script&gt;</span>
+<span class="s">&lt;/head&gt;</span>
+<span class="s">&lt;body class=&quot;tundra&quot;&gt;</span><span class="si">%s</span><span class="s">&lt;/body&gt;&lt;/html&gt;&quot;&quot;&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+
+<span class="n">div</span> <span class="o">=</span> <span class="n">Tag</span><span class="p">(</span><span class="s">&#39;div&#39;</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">Tag</span><span class="p">(</span><span class="s">&#39;p&#39;</span><span class="p">)</span>
+<span class="n">checkbox</span> <span class="o">=</span> <span class="n">Tag</span><span class="p">(</span><span class="s">&#39;input&#39;</span><span class="p">,</span> <span class="n">dojoType</span><span class="o">=</span><span class="s">&#39;dijit.form.CheckBox&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;checkbox&#39;</span><span class="p">)</span>
+<span class="n">textbox</span> <span class="o">=</span> <span class="n">Tag</span><span class="p">(</span><span class="s">&#39;input&#39;</span><span class="p">,</span> <span class="n">dojoType</span><span class="o">=</span><span class="s">&#39;dijit.form.TextBox&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;text&#39;</span><span class="p">)</span>
+<span class="n">button</span> <span class="o">=</span> <span class="n">Tag</span><span class="p">(</span><span class="s">&#39;button&#39;</span><span class="p">,</span> <span class="n">dojoType</span><span class="o">=</span><span class="s">&#39;dijit.form.Button&#39;</span><span class="p">)</span>
+<span class="n">datetextbox</span> <span class="o">=</span> <span class="n">Tag</span><span class="p">(</span><span class="s">&#39;input&#39;</span><span class="p">,</span> <span class="n">dojoType</span><span class="o">=</span><span class="s">&#39;dijit.form.DateTextBox&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s">&#39;text&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">div</span> <span class="p">[</span>
+        <span class="n">p</span> <span class="p">[</span>
+            <span class="s">&#39;This is a Button &#39;</span><span class="p">,</span>
+            <span class="n">button</span><span class="p">[</span><span class="s">&#39;Click me!&#39;</span><span class="p">],</span>
+        <span class="p">],</span>
+        <span class="n">p</span> <span class="p">[</span>
+            <span class="s">&#39;This is a TextBox &#39;</span><span class="p">,</span>
+            <span class="n">textbox</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s">&#39;The cow jumped over the moon, and it exploded&#39;</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">p</span> <span class="p">[</span>
+            <span class="s">&#39;This is a CheckBox &#39;</span><span class="p">,</span>
+            <span class="n">checkbox</span><span class="p">(</span><span class="n">checked</span><span class="o">=</span><span class="s">&#39;checked&#39;</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="n">p</span> <span class="p">[</span>
+            <span class="s">&#39;This is a DateTextBox &#39;</span><span class="p">,</span>
+            <span class="n">datetextbox</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s">&#39;1998-03-23&#39;</span><span class="p">),</span>
+        <span class="p">],</span>
+    <span class="p">]</span>
+
+    <span class="n">html</span> <span class="o">=</span> <span class="n">dijit</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">html</span>
+<span class="c">##    open(&#39;output.html&#39;, &#39;w&#39;).write(html)</span>
+<span class="c">##    webbrowser.open(&#39;output.html&#39;)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;html&gt;&lt;head&gt;</span>
+<span class="nt">&lt;title&gt;</span>Dijit Generation Example<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;style </span><span class="na">type=</span><span class="s">&quot;text/css&quot;</span><span class="nt">&gt;</span>
+        <span class="k">@import</span> <span class="s2">&quot;http://o.aolcdn.com/dojo/1.0.0/dijit/themes/tundra/tundra.css&quot;</span><span class="p">;</span>
+        <span class="k">@import</span> <span class="s2">&quot;http://o.aolcdn.com/dojo/1.0.0/dojo/resources/dojo.css&quot;</span>
+    <span class="nt">&lt;/style&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;http://o.aolcdn.com/dojo/1.0.0/dojo/dojo.xd.js&quot;</span>
+        <span class="na">djConfig=</span><span class="s">&quot;parseOnLoad: true&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+        <span class="nx">dojo</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;dijit.form.Button&quot;</span><span class="p">);</span>
+        <span class="nx">dojo</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;dijit.form.CheckBox&quot;</span><span class="p">);</span>
+        <span class="nx">dojo</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;dijit.form.TextBox&quot;</span><span class="p">);</span>
+        <span class="nx">dojo</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;dijit.form.DateTextBox&quot;</span><span class="p">);</span>
+        <span class="nx">dojo</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="s2">&quot;dojo.parser&quot;</span><span class="p">);</span>
+    <span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body</span> <span class="na">class=</span><span class="s">&quot;tundra&quot;</span><span class="nt">&gt;&lt;div&gt;&lt;p&gt;</span>This is a Button <span class="nt">&lt;button</span> <span class="na">dojoType=</span><span class="s">&quot;dijit.form.Button&quot;</span><span class="nt">&gt;</span>Click me!<span class="nt">&lt;/button&gt;</span>
+<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p&gt;</span>This is a TextBox <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;The cow jumped over the moon, and it exploded&quot;</span> <span class="na">dojoType=</span><span class="s">&quot;dijit.form.TextBox&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p&gt;</span>This is a CheckBox <span class="nt">&lt;input</span> <span class="na">checked=</span><span class="s">&quot;checked&quot;</span> <span class="na">type=</span><span class="s">&quot;checkbox&quot;</span> <span class="na">dojoType=</span><span class="s">&quot;dijit.form.CheckBox&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;p&gt;</span>This is a DateTextBox <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;1998-03-23&quot;</span> <span class="na">dojoType=</span><span class="s">&quot;dijit.form.DateTextBox&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;&lt;/html&gt;</span>
+</pre></div>
+</div>
+<div class="hintlist hidden">
+<h2>Hints</h2><ol class="arabic simple">
+<li>You only need to make a minimal change to the previous version of the <code class="docutils literal"><span class="pre">Tag</span></code> class</li>
+<li>Specifically, you need to modify <code class="docutils literal"><span class="pre">__init__</span></code>.</li>
+<li>You should change the signature of <code class="docutils literal"><span class="pre">__init__</span></code> to:  <code class="docutils literal"><span class="pre">def</span> <span class="pre">__init__(self,</span> <span class="pre">name,</span> <span class="pre">**kwargs):</span></code></li>
+</ol>
+</div><p>Solution: <a class="reference download internal" href="../../_downloads/html3.py"><code class="xref download docutils literal"><span class="pre">solutions/html3.py</span></code></a></p>
+<p><a class="reference internal" href="../index.html"><em>Go back</em></a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/tutorial.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

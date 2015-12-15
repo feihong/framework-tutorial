@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Secrets of the Framework Creators &mdash; Secrets of the Framework Creators 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="_static/tutorial.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Secrets of the Framework Creators 0.1 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Secrets of the Framework Creators
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="framehack/index.html">Frame Hacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decorator/index.html">Decorators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metaclass/index.html">Metaclasses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="magicmethod/index.html">Magic Methods</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Secrets of the Framework Creators</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Secrets of the Framework Creators</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/crazy-intro.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="secrets-of-the-framework-creators">
+<h1>Secrets of the Framework Creators<a class="headerlink" href="#secrets-of-the-framework-creators" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="presenters">
+<h2>Presenters<a class="headerlink" href="#presenters" title="Permalink to this headline">¶</a></h2>
+<p><em>Feihong Hsu</em> lives in the wild and woolly exurbs of northwest Chicagoland. Although primarily a Python programmer, he has another, darker persona that dabbles in C#. Currently, he is between jobs and enjoying some time off. His previous job was at Morningstar Inc, where his responsibilities were to cajole, conflate, and massage vast quantities of financial data. He is the author of wxPita (a wrapper library for wxPython), and he blogs at <a class="reference external" href="http://feihonghsu.blogspot.com">http://feihonghsu.blogspot.com</a>.</p>
+<p><em>Kumar McMillan</em> lives in sunny Chicago, IL and works as a Senior Software Engineer at Leapfrog Online, LLC. He uses Python to manage Leapfrog&#8217;s ETL pipeline (Extracting, Transforming, and Loading data) as well as build web applications / services and automated testing strategies. He is an active member of the open source community, maintaining several packages like fixture, wsgi_intercept, wikir, and helping out on nose, blogmaker and several others. He writes about software from time to time on his blog, <a class="reference external" href="http://farmdev.com/">http://farmdev.com/</a>.</p>
+</div>
+<div class="section" id="a-long-winded-introduction-that-might-uplift-your-soul-but-most-likely-will-bore-you-to-tears">
+<h2>A Long-Winded Introduction That Might Uplift Your Soul But Most Likely Will Bore You to Tears<a class="headerlink" href="#a-long-winded-introduction-that-might-uplift-your-soul-but-most-likely-will-bore-you-to-tears" title="Permalink to this headline">¶</a></h2>
+<p>One day, I woke up in my bed and said to myself, &#8220;Hey, I should download a bunch of popular Python frameworks, take a look under the hood to see what makes them so awesome, and then give a tutorial at PyCon about my findings!&#8221;</p>
+<p>Ha, as if.</p>
+<p>The real story is much more convoluted. The truth is, it all started with me setting out on a doomed quest to create the Ultimate Python GUI Toolkit. Whenever you set out to create an &#8220;ultimate&#8221; anything, you tend to set yourself up for failure. And failed I did. Spectacularly. Minus the spectacular part, since almost no one even knew what I had attempted to do.</p>
+<p>My Ultimate Python GUI Toolkit had turned into an Ultimate Piece of Crap. It was an unholy mess. My university teachers would probably lynch me if they saw that code. But I did produce a lot of code, all in a futile attempt to mimic the APIs of the latest Turbo-Django-Storm hotness.</p>
+<p>I was pretty bummed about my failure, since I had been planning on showing off my results in time for PyCon 2008. But it slowly dawned on me that I had done one thing right: I had used my usual lazy-ass approach to programming. Instead of coming up with my own ideas, I stole a lot of good ideas from a number of well-known Python frameworks. So that meant that I knew how they worked! Actually, that only meant that I fooled myself into thinking I knew how they worked.</p>
+<p>False confidence can lead to tragic consequences. Like if you spend your childhood playing Street Fighter, and from only that decide that you&#8217;re tough enough to survive a real street fight. But false confidence is also the impetus we need to challenge fate, to throw caution to the wind and attempt something beyond our ken.</p>
+<p>You can probably see where this is all headed. I submitted a tutorial proposal to the PyCon selection committee. To my surprise, they accepted it. I don&#8217;t think it&#8217;s because they weren&#8217;t paying attention. I think it&#8217;s probably because I&#8217;m as good at fooling other people as I am at fooling myself.</p>
+<p>So I start seriously writing the tutorial in January. I&#8217;m actually proud of myself for starting so early, a whole two months before the actual conference. The God of Procrastination was throwing all these distractions my way (for example, a new Terminator TV show!), and I was swatting them all away as if I were Martina Navritilova.</p>
+<p>But very early in the process, I find that I&#8217;m having some difficulty. Actually, I&#8217;m having a <em>really</em> hard time. It&#8217;s so much work! There are so many decisions to make! I haven&#8217;t taught computer stuff in ages! What if I pull a Britney Spears when I&#8217;m on stage?!? Metaphorically speaking, I had stepped right into a pit of fugly monsters. This was bad. Could I just quit?</p>
+<p>But by this time I could see the registration numbers ramping up for the tutorial. Holy crap, Batman, people actually think that I can teach them something! My flagging confidence had been boosted by the (misplaced?) faith of others. Okay, so quitting is <em>not</em> an option now. I&#8217;d just have to keep plugging at it until I <em>Got It Done</em>. Metaphorically speaking, I&#8217;d have to keep killing fugly monsters with a teaspoon until I could pile their stinking corpses high enough to climb out of this goddamn pit.</p>
+<p>I hope the irony of this situation is not lost on you. I failed to make an awesome framework, so I end up teaching others about how to make awesome frameworks. Wait, that&#8217;s not ironic at all. That&#8217;s just the embodiment of that old adage: &#8220;Those who can&#8217;t do, teach&#8221;.</p>
+</div>
+<div class="section" id="the-briefer-and-less-insane-intro">
+<h2>The Briefer and Less Insane Intro<a class="headerlink" href="#the-briefer-and-less-insane-intro" title="Permalink to this headline">¶</a></h2>
+<p>In this tutorial, we are going to show you how to take your Python programming to a higher level. We are not going to do this by throwing Scary Computer Science Stuff at you. There is no discussion of algorithms, runtime complexity, or data structures. We are simply going to make you aware of some advanced features of the Python programming language.</p>
+<p>The features we will be covering are: frame hacks, magic methods, decorators, and metaclasses. We say that these features are &#8220;advanced&#8221; because they are used by only 10% of Python programmers (our unscientific estimate). That means that most of the code you see in the wild will not be using them. However, they show up a lot in popular Python frameworks, which implies that they are inordinately useful for creating abstractions. In other words, these features help you write more code upfront so that you can write less code overall. If you&#8217;re just a user of a framework, you get the benefit of writing less code without having to write a large amount of code at the beginning.</p>
+<p>This tutorial is not a comprehensive study of advanced Python techniques, and will not necessarily help you become an expert Pythonista. In fact, the presenters of this tutorial are not experts (note the lack of the words &#8220;expert&#8221;, &#8220;guru&#8221;, or &#8220;master&#8221; in our bios). However, even non-experts can make effective use of these features. The extra syntax you need to know is minimal, and should not give you any trouble if you have been using Python for a moderate amount of time. To ensure that you grasp the underlying concepts, we have a short, interactive tutorial corresponding to each feature.</p>
+<p>The main difficulty, as we see it, is figuring out <em>when</em> to use these advanced features. To that end, we have included a number of use cases and recipes. The use cases include both case studies and somewhat-contrived examples that show you real-world scenarios under which a particular feature is used. The recipes help you gain programming experience on a particular feature. Only through repeated exposure to a feature will you truly &#8220;get it&#8221;, but hopefully the recipes will set you on the right course.</p>
+<p>There are eight recipes in all, two recipes for each feature. Because we have a limited amount of time, and because we do not know the average skill level of the participants, we do not know if we have a realistic shot at presenting all eight recipes. However, each recipe is designed to be relatively self-contained and includes all the information you need to complete it on your own. For example, each recipe includes several sequential &#8220;steps&#8221; that progressively build up to a complete program. Each recipe step includes hints and full solutions, in case you get stuck at any point. There is also the <a class="reference external" href="http://groups.google.com/group/secrets-of-the-framework-creators/">Google Group</a> that the presenters have created. There you can post questions, ask for hints, and otherwise interact with the presenters as well as your fellow participants.</p>
+</div>
+<div class="section" id="sections">
+<h2>Sections<a class="headerlink" href="#sections" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="framehack/index.html">Frame Hacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decorator/index.html">Decorators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metaclass/index.html">Metaclasses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="magicmethod/index.html">Magic Methods</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="useless-epilogue">
+<h2>Useless Epilogue<a class="headerlink" href="#useless-epilogue" title="Permalink to this headline">¶</a></h2>
+<p>I sought the Holy Grail of GUI Toolkits, but tasted bitter defeat. If I were Indiana Jones, then I didn&#8217;t save the girl and I didn&#8217;t melt those Nazis&#8217; faces off; instead I ate the poisoned date and got flattened by the giant boulder. However, my efforts were rewarded by sweet, succulent knowledge, and as we all know, &#8220;Knowing Is Half the Battle(TM)&#8221;. In other words, I will be a lady-killing, Nazi-liquefying, lion-whipping badass in the next sequel. (For the record, I don&#8217;t know what I&#8217;m talking about anymore.)</p>
+<p>Making this tutorial has taught me a lot of things. That&#8217;s the funny thing about teaching &#8211; if you&#8217;re seriously engaged in the teaching process, then you&#8217;re learning as much as you&#8217;re teaching. I think it&#8217;s helped me clarify my thoughts on what makes a useful framework. So, maybe someday, you&#8217;ll finally see an &#8220;Ultimate Python GUI Toolkit&#8221; in the Cheeseshop. Except replace &#8220;Ultimate&#8221; with &#8220;Slightly Useful&#8221;. And then replace &#8220;Slightly Useful&#8221; with &#8220;Not Completely Useless&#8221;. Then watch me create another PyCon tutorial out of the ashes of my defeat...</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/tutorial.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

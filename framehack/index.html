@@ -1,0 +1,587 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Frame Hacks &mdash; Secrets of the Framework Creators 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/tutorial.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Secrets of the Framework Creators 0.1 documentation" href="../index.html"/>
+        <link rel="next" title="Decorators" href="../decorator/index.html"/>
+        <link rel="prev" title="Introduction" href="../intro.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Secrets of the Framework Creators
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Frame Hacks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introducing-sys-getframe">Introducing sys._getframe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exploring-frame-objects">Exploring frame objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-sys-getframe-inside-a-class-definition">Using sys._getframe inside a class definition</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#what-do-we-mean-by-frame-hack">What do we mean by &#8220;frame hack&#8221;?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases">Use Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#group-related-items-inside-a-class-definition-trellis">Group related items inside a class definition (Trellis)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#verb-object-style-function-call-elixir">Verb-object style function call (Elixir)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#crazy-monkey-patching-lxml">Crazy monkey patching (lxml)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#circumvent-scope-restrictions">Circumvent scope restrictions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#recipes">Recipes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#recipe-1-ruby-style-string-interpolation">Recipe #1: Ruby-style string interpolation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#steps">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#recipe-2-generating-properties-on-a-wrapper-class">Recipe #2: Generating properties on a wrapper class</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Steps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#frame-hack-caveats">Frame Hack Caveats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#not-available-everywhere">Not available everywhere</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#messy-when-inheritance-is-involved">Messy when inheritance is involved</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#metaclasses-are-more-flexible">Metaclasses are more flexible</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../decorator/index.html">Decorators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../metaclass/index.html">Metaclasses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../magicmethod/index.html">Magic Methods</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Secrets of the Framework Creators</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Frame Hacks</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/framehack/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="frame-hacks">
+<h1>Frame Hacks<a class="headerlink" href="#frame-hacks" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#getting-started" id="id3">Getting Started</a><ul>
+<li><a class="reference internal" href="#introducing-sys-getframe" id="id4">Introducing sys._getframe</a></li>
+<li><a class="reference internal" href="#exploring-frame-objects" id="id5">Exploring frame objects</a></li>
+<li><a class="reference internal" href="#using-sys-getframe-inside-a-class-definition" id="id6">Using sys._getframe inside a class definition</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#what-do-we-mean-by-frame-hack" id="id7">What do we mean by &#8220;frame hack&#8221;?</a></li>
+<li><a class="reference internal" href="#use-cases" id="id8">Use Cases</a><ul>
+<li><a class="reference internal" href="#group-related-items-inside-a-class-definition-trellis" id="id9">Group related items inside a class definition (Trellis)</a></li>
+<li><a class="reference internal" href="#verb-object-style-function-call-elixir" id="id10">Verb-object style function call (Elixir)</a></li>
+<li><a class="reference internal" href="#crazy-monkey-patching-lxml" id="id11">Crazy monkey patching (lxml)</a></li>
+<li><a class="reference internal" href="#circumvent-scope-restrictions" id="id12">Circumvent scope restrictions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#recipes" id="id13">Recipes</a><ul>
+<li><a class="reference internal" href="#recipe-1-ruby-style-string-interpolation" id="id14">Recipe #1: Ruby-style string interpolation</a><ul>
+<li><a class="reference internal" href="#prerequisites" id="id15">Prerequisites</a></li>
+<li><a class="reference internal" href="#steps" id="id16">Steps</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#recipe-2-generating-properties-on-a-wrapper-class" id="id17">Recipe #2: Generating properties on a wrapper class</a><ul>
+<li><a class="reference internal" href="#id1" id="id18">Prerequisites</a></li>
+<li><a class="reference internal" href="#id2" id="id19">Steps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#frame-hack-caveats" id="id20">Frame Hack Caveats</a><ul>
+<li><a class="reference internal" href="#not-available-everywhere" id="id21">Not available everywhere</a></li>
+<li><a class="reference internal" href="#messy-when-inheritance-is-involved" id="id22">Messy when inheritance is involved</a></li>
+<li><a class="reference internal" href="#metaclasses-are-more-flexible" id="id23">Metaclasses are more flexible</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="getting-started">
+<h2><a class="toc-backref" href="#id3">Getting Started</a><a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="introducing-sys-getframe">
+<h3><a class="toc-backref" href="#id4">Introducing sys._getframe</a><a class="headerlink" href="#introducing-sys-getframe" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">def</span> <span class="nf">one</span><span class="p">():</span>
+    <span class="n">two</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">two</span><span class="p">():</span>
+    <span class="n">three</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">three</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+        <span class="n">show_frame</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">show_frame</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">frame</span>
+    <span class="k">print</span> <span class="s">&quot;  frame     = sys._getframe(</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">num</span>
+    <span class="k">print</span> <span class="s">&quot;  function  = </span><span class="si">%s</span><span class="s">()&quot;</span> <span class="o">%</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span>
+    <span class="k">print</span> <span class="s">&quot;  file/line = </span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_lineno</span><span class="p">)</span>
+
+<span class="n">one</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;frame object at 0x606c50&gt;
+  frame     = sys._getframe(0)
+  function  = three()
+  file/line = stack.py:12
+&lt;frame object at 0x180be10&gt;
+  frame     = sys._getframe(1)
+  function  = two()
+  file/line = stack.py:7
+&lt;frame object at 0x608d30&gt;
+  frame     = sys._getframe(2)
+  function  = one()
+  file/line = stack.py:4
+</pre></div>
+</div>
+<p>All frame hacks revolve around <code class="docutils literal"><span class="pre">sys._getframe</span></code>. This special function allows us to get information from the frame of the calling function.   As you can see from above, Python creates a frame for every new call you make.  You can think of a frame object as being like an instance of a function.</p>
+</div>
+<div class="section" id="exploring-frame-objects">
+<h3><a class="toc-backref" href="#id5">Exploring frame objects</a><a class="headerlink" href="#exploring-frame-objects" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">pdb</span>
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">aFunction</span><span class="p">():</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s">&#39;hello&#39;</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">3.45</span><span class="p">)</span>
+    <span class="n">test</span><span class="p">()</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="s">&quot;This won&#39;t show up in the frame&quot;</span>
+
+<span class="n">aFunction</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Let&#8217;s use the <a class="reference external" href="http://docs.python.org/lib/module-pdb.html">Python Debugger</a> to interactively see what kinds of information the frame object stores. Attributes of the frame type are detailed in the Python <a class="reference external" href="http://docs.python.org/lib/inspect-types.html">type reference</a>.</p>
+</div>
+<div class="section" id="using-sys-getframe-inside-a-class-definition">
+<h3><a class="toc-backref" href="#id6">Using sys._getframe inside a class definition</a><a class="headerlink" href="#using-sys-getframe-inside-a-class-definition" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">pdb</span>
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="s">&#39;hello&#39;</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mf">3.45</span><span class="p">)</span>
+    <span class="n">test</span><span class="p">()</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="s">&quot;This won&#39;t show up in the frame&quot;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">sys._getframe</span></code> function works equally well with class frames. Once again, let&#8217;s use the Python Debugger to see what kinds of information the frame object contains.</p>
+<p>Note that the <code class="docutils literal"><span class="pre">test</span></code> function will not be able to access <code class="docutils literal"><span class="pre">d</span></code> because it is invoked before <code class="docutils literal"><span class="pre">d</span></code> is defined in the class.</p>
+</div>
+</div>
+<div class="section" id="what-do-we-mean-by-frame-hack">
+<h2><a class="toc-backref" href="#id7">What do we mean by &#8220;frame hack&#8221;?</a><a class="headerlink" href="#what-do-we-mean-by-frame-hack" title="Permalink to this headline">¶</a></h2>
+<p>A frame hack is any code that inspects or modifies frame objects.</p>
+</div>
+<div class="section" id="use-cases">
+<h2><a class="toc-backref" href="#id8">Use Cases</a><a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="group-related-items-inside-a-class-definition-trellis">
+<h3><a class="toc-backref" href="#id9">Group related items inside a class definition (Trellis)</a><a class="headerlink" href="#group-related-items-inside-a-class-definition-trellis" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://peak.telecommunity.com/DevCenter/Trellis">Trellis</a> is a framework that greatly simplifies event-driven programming. It provides you with functions that allow you to group the definitions of values and rules:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TempConverter</span><span class="p">(</span><span class="n">trellis</span><span class="o">.</span><span class="n">Component</span><span class="p">):</span>
+    <span class="n">trellis</span><span class="o">.</span><span class="n">values</span><span class="p">(</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">trellis</span><span class="o">.</span><span class="n">rules</span><span class="p">(</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">*</span> <span class="mf">1.8</span> <span class="o">+</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">-</span> <span class="mi">32</span><span class="p">)</span><span class="o">/</span><span class="mf">1.8</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Trellis does not force you to use its grouping functions. You can alternatively define the <code class="docutils literal"><span class="pre">TempConverter</span></code> class like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TempConverter</span><span class="p">(</span><span class="n">trellis</span><span class="o">.</span><span class="n">Component</span><span class="p">):</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">trellis</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">trellis</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">F</span> <span class="o">=</span> <span class="n">trellis</span><span class="o">.</span><span class="n">rule</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">*</span> <span class="mf">1.8</span> <span class="o">+</span> <span class="mi">32</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">trellis</span><span class="o">.</span><span class="n">rule</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">-</span> <span class="mi">32</span><span class="p">)</span><span class="o">/</span><span class="mf">1.8</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this version, we lose some of the &#8220;structure&#8221; present in the original class definition. The code did get shorter (from 9 lines to 6), but at the expense of readability.</p>
+</div>
+<div class="section" id="verb-object-style-function-call-elixir">
+<h3><a class="toc-backref" href="#id10">Verb-object style function call (Elixir)</a><a class="headerlink" href="#verb-object-style-function-call-elixir" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Movie</span><span class="p">(</span><span class="n">Entity</span><span class="p">):</span>
+    <span class="c"># ...</span>
+    <span class="n">belongs_to</span><span class="p">(</span><span class="s">&#39;genre&#39;</span><span class="p">,</span> <span class="n">of_kind</span><span class="o">=</span><span class="s">&#39;Genre&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Genre</span><span class="p">(</span><span class="n">Entity</span><span class="p">):</span>
+    <span class="c"># ...</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>These kinds of function calls are used within class definitions. The name of the function is usually a verb and it accepts a parameter that is meant to be the &#8220;object&#8221; of the verb. They are meant to make class definitions read more like natural language. They always modify the frame of the class they are used in.</p>
+<p>In the above code sample, the <code class="docutils literal"><span class="pre">belongs_to</span></code> function tells Elixir that the Movie entity is a child of the Genre entity.</p>
+<p>For a more explicit definition, one could write the code like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Movie</span><span class="p">(</span><span class="n">Entity</span><span class="p">):</span>
+    <span class="n">genre</span> <span class="o">=</span> <span class="n">ManyToOne</span><span class="p">(</span><span class="s">&#39;Genre&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Genre</span><span class="p">(</span><span class="n">Entity</span><span class="p">):</span>
+    <span class="c"># ...</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>While this reveals the class attribute construction better, the relationship between <code class="docutils literal"><span class="pre">Movie</span></code> and <code class="docutils literal"><span class="pre">Genre</span></code> doesn&#8217;t read as well.</p>
+</div>
+<div class="section" id="crazy-monkey-patching-lxml">
+<h3><a class="toc-backref" href="#id11">Crazy monkey patching (lxml)</a><a class="headerlink" href="#crazy-monkey-patching-lxml" title="Permalink to this headline">¶</a></h3>
+<p>When writing doctests for code that produces XML there lies a problem in checking output.  Since XML is mostly ignorant of whitespace, your doctests become unecessarily fragile since whitespace is important.  To deal with this, the <a class="reference external" href="http://codespeak.net/lxml/">lxml</a> library employs some impressive, realtime monkey patching to ignore whitespace.  Consider the following doctest:</p>
+<div class="highlight-pycon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">lxml.html.usedoctest</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">lxml.html</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">html</span> <span class="o">=</span> <span class="n">lxml</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="s">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="gp">... </span><span class="s">   &lt;html&gt;&lt;body onload=&quot;&quot; color=&quot;white&quot;&gt;</span>
+<span class="gp">... </span><span class="s">     &lt;p&gt;Hi  !&lt;/p&gt;</span>
+<span class="gp">... </span><span class="s">   &lt;/body&gt;&lt;/html&gt;</span>
+<span class="gp">... </span><span class="s">&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lxml</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+<span class="go">&lt;html&gt; &lt;body color=&quot;white&quot; onload=&quot;&quot;&gt; &lt;p&gt;Hi    !&lt;/p&gt; &lt;/body&gt; &lt;/html&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">lxml</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+<span class="go">&lt;html&gt;</span>
+<span class="go">  &lt;body color=&quot;white&quot; onload=&quot;&quot;&gt;</span>
+<span class="go">    &lt;p&gt;Hi !&lt;/p&gt;</span>
+<span class="go">  &lt;/body&gt;</span>
+<span class="go">&lt;/html&gt;</span>
+</pre></div>
+</div>
+<p>The two printed HTML strings are semantically equivalent when parsed by an HTML parser so the doctests should not fail.  However without a custom output checker they would fail since the attribute positions are switched and there is extra indentation and whitespace.</p>
+<p>To address this the first statement, <code class="docutils literal"><span class="pre">import</span> <span class="pre">lxml.html.usedoctest</span></code>, executes code that walks the frame stack backwards, locates the frame containing the doctest runner, clones its &#8220;check&#8221; function, resumes doctesting, then puts back the original check function.</p>
+<p>Installing a custom output checker with Python 2.4&#8217;s doctest is a cumbersome task.  One must instantiate several objects and pass those in to the test runner as it&#8217;s created.  Most doctest based frameworks do not allow this level of customization and thus such a bold frame hack was devised.</p>
+</div>
+<div class="section" id="circumvent-scope-restrictions">
+<h3><a class="toc-backref" href="#id12">Circumvent scope restrictions</a><a class="headerlink" href="#circumvent-scope-restrictions" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Feihong&#39;</span>
+<span class="n">place</span> <span class="o">=</span> <span class="s">&#39;Chicago&#39;</span>
+<span class="k">print</span> <span class="n">interpolate</span><span class="p">(</span><span class="s">&quot;My name is ${name}. I work in ${place}.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>My name is Feihong. I work in Chicago.
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">interpolate</span></code> function, implemented using a frame hack, is able to find the values for <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">place</span></code> by peering into the calling frame. (Assume that <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">place</span></code> are not global variables.)</p>
+</div>
+</div>
+<div class="section" id="recipes">
+<h2><a class="toc-backref" href="#id13">Recipes</a><a class="headerlink" href="#recipes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="recipe-1-ruby-style-string-interpolation">
+<h3><a class="toc-backref" href="#id14">Recipe #1: Ruby-style string interpolation</a><a class="headerlink" href="#recipe-1-ruby-style-string-interpolation" title="Permalink to this headline">¶</a></h3>
+<p>In this recipe, we&#8217;ll show you how to implement Ruby-style string interpolation. You will create a function called <code class="docutils literal"><span class="pre">interpolate</span></code> that can evaluate a template string containing arbitrary Python expressions. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">76</span><span class="p">]</span>
+<span class="n">startTime</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">endTime</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2008</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="n">interpolate</span><span class="p">(</span><span class="s">&#39;Took ${(endTime - startTime).seconds} seconds &#39;</span> \
+    <span class="s">&#39;to get an average of ${sum(numbers) / len(numbers)}&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>Took 62760 seconds to get an average of 31
+</pre></div>
+</div>
+<div class="section" id="prerequisites">
+<h4><a class="toc-backref" href="#id15">Prerequisites</a><a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h4>
+<p>To fully understand the recipe, you&#8217;ll need to know:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/2/library/string.html#string.Template">string.Template class</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/re.html#re.finditer">re.finditer function</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/reference/simple_stmts.html#the-yield-statement">yield statement</a></li>
+</ul>
+</div>
+<div class="section" id="steps">
+<h4><a class="toc-backref" href="#id16">Steps</a><a class="headerlink" href="#steps" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference internal" href="interpolate/step0.html"><em>Interpolate 0</em></a></li>
+<li><a class="reference internal" href="interpolate/step1.html"><em>Interpolate 1</em></a></li>
+<li><a class="reference internal" href="interpolate/step2.html"><em>Interpolate 2</em></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="recipe-2-generating-properties-on-a-wrapper-class">
+<h3><a class="toc-backref" href="#id17">Recipe #2: Generating properties on a wrapper class</a><a class="headerlink" href="#recipe-2-generating-properties-on-a-wrapper-class" title="Permalink to this headline">¶</a></h3>
+<p>Let&#8217;s say that you have a C++ class that has a ton of setter and getter functions. Something like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Employee</span>
+<span class="p">{</span>
+    <span class="n">public</span><span class="p">:</span>
+        <span class="n">string</span> <span class="n">GetGivenName</span><span class="p">();</span>
+        <span class="n">void</span> <span class="n">SetGivenName</span><span class="p">(</span><span class="n">string</span> <span class="n">value</span><span class="p">);</span>
+
+        <span class="n">string</span> <span class="n">GetFamilyName</span><span class="p">();</span>
+        <span class="n">void</span> <span class="n">SetFamilyName</span><span class="p">(</span><span class="n">string</span> <span class="n">value</span><span class="p">);</span>
+
+        <span class="n">string</span> <span class="n">GetDateOfBirth</span><span class="p">();</span>
+        <span class="n">void</span> <span class="n">SetDateOfBirth</span><span class="p">(</span><span class="n">string</span> <span class="n">value</span><span class="p">);</span>
+
+        <span class="o">//</span> <span class="n">ad</span> <span class="n">infinitum</span><span class="o">...</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Let&#8217;s also assume that you used SWIG to create a wrapper class for <code class="docutils literal"><span class="pre">Employee</span></code>. Now, you might like to make a nicer interface for this wrapper class by replacing each setter/getter pair with a corresponding property. This is the most straightforward way to do it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PyEmployee</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">Employee</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+    <span class="n">given</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">GetGivenName</span><span class="p">(),</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">SetGivenName</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">family</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">GetFamilyName</span><span class="p">(),</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">SetFamilyName</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">birth</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">GetDateOfBirth</span><span class="p">(),</span>
+        <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">SetDateOfBirth</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Pretty easy, right? But it&#8217;s so much typing! What if you had a lot more getter/setter pairs to deal with? Or other wrapped classes with setter/getter pairs? You might be typing property definitions for a whole day!</p>
+<p>Let&#8217;s use a frame hack to simplify the definition of properties. Using our recipe, we&#8217;ll be able to reduce the <code class="docutils literal"><span class="pre">PyEmployee</span></code> definition to this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">PyEmployee</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">Employee</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+    <span class="n">properties</span><span class="p">(</span>
+        <span class="n">given</span>  <span class="o">=</span> <span class="s">&#39;GivenName&#39;</span><span class="p">,</span>
+        <span class="n">family</span> <span class="o">=</span> <span class="s">&#39;FamilyName&#39;</span><span class="p">,</span>
+        <span class="n">birth</span> <span class="o">=</span>  <span class="s">&#39;DateOfBirth&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>This is not only shorter, but easier to read. And you&#8217;re less likely to make a mistake typing all those lambda expressions.</p>
+<div class="section" id="id1">
+<h4><a class="toc-backref" href="#id18">Prerequisites</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/2/library/functions.html#property">property function</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/functions.html#eval">eval function</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/tutorial/controlflow.html#lambda-expressions">lambda expression</a></li>
+<li><a class="reference external" href="http://www.shutupandship.com/2012/01/python-closures-explained.html">closures</a></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h4><a class="toc-backref" href="#id19">Steps</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference internal" href="wrapper/step0.html"><em>Wrapper 0</em></a></li>
+<li><a class="reference internal" href="wrapper/step1.html"><em>Wrapper 1</em></a></li>
+<li><a class="reference internal" href="wrapper/step2.html"><em>Wrapper 2</em></a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="frame-hack-caveats">
+<h2><a class="toc-backref" href="#id20">Frame Hack Caveats</a><a class="headerlink" href="#frame-hack-caveats" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="not-available-everywhere">
+<h3><a class="toc-backref" href="#id21">Not available everywhere</a><a class="headerlink" href="#not-available-everywhere" title="Permalink to this headline">¶</a></h3>
+<p>It is important to keep in mind that frame hacks are, well, hacks. The <code class="docutils literal"><span class="pre">sys._getframe</span></code> function is not guaranteed to be available on every platform and implementation. For example, one implementation of Python that <a class="reference external" href="http://ironpython-urls.blogspot.com/2007/11/ironpython-and-python-stack-frames.html">does not support</a> <code class="docutils literal"><span class="pre">sys._getframes</span></code> is <a class="reference external" href="http://codeplex.com/IronPython">IronPython</a>.  And there may be complications with it in <a class="reference external" href="http://www.stackless.com/">Stackless Python</a>.</p>
+<p>However, if you know that your library is only going to be used with CPython on a major platform (Linux, Mac, or Windows), then it&#8217;s pretty safe to use frame hacks.</p>
+</div>
+<div class="section" id="messy-when-inheritance-is-involved">
+<h3><a class="toc-backref" href="#id22">Messy when inheritance is involved</a><a class="headerlink" href="#messy-when-inheritance-is-involved" title="Permalink to this headline">¶</a></h3>
+<p>Frame hacks that have to account for class inheritance get messy because superclasses and subclasses are always in different frames. It is is still possible to use them, because CPython&#8217;s frame objects allow you to traverse the entire stack of frames. However, you&#8217;ll end up writing a lot of extra code to figure out just how many frames you need to traverse.</p>
+</div>
+<div class="section" id="metaclasses-are-more-flexible">
+<h3><a class="toc-backref" href="#id23">Metaclasses are more flexible</a><a class="headerlink" href="#metaclasses-are-more-flexible" title="Permalink to this headline">¶</a></h3>
+<p>Many frame hacks scenarios, particularly those that work with classes, can be substituted by metaclasses. Metaclasses are more difficult to use, but also more powerful. We&#8217;ll take a close look at metaclasses in another section of this tutorial.</p>
+<p><a class="reference internal" href="exercises.html"><em>Frame Hack Exercises</em></a></p>
+<p><a class="reference internal" href="../index.html"><em>Go Back</em></a></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../decorator/index.html" class="btn btn-neutral float-right" title="Decorators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../intro.html" class="btn btn-neutral" title="Introduction" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/tutorial.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

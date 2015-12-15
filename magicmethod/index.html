@@ -1,0 +1,629 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Magic Methods &mdash; Secrets of the Framework Creators 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../_static/tutorial.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="Secrets of the Framework Creators 0.1 documentation" href="../index.html"/>
+        <link rel="prev" title="Metaclasses" href="../metaclass/index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Secrets of the Framework Creators
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../framehack/index.html">Frame Hacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../decorator/index.html">Decorators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../metaclass/index.html">Metaclasses</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Magic Methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introducing-getitem">Introducing __getitem__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#introducing-call">Introducing __call__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#introducing-getattr">Introducing __getattr__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#introducing-setattr">Introducing __setattr__</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases">Use Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-hierarchical-data-structures">Building hierarchical data structures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#accessing-hierarchical-data-structures">Accessing hierarchical data structures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#operator-overloading">Operator overloading</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#recipes">Recipes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#html-generation">HTML Generation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#steps">Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#building-tkinter-interfaces">Building Tkinter interfaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Steps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#magic-method-caveats">Magic Method Caveats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#too-much-magic-is-not-good">Too much magic is not good</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#copying-objects-uses-a-lot-of-memory">Copying objects uses a lot of memory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Secrets of the Framework Creators</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Magic Methods</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/magicmethod/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="magic-methods">
+<h1>Magic Methods<a class="headerlink" href="#magic-methods" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#getting-started" id="id3">Getting Started</a><ul>
+<li><a class="reference internal" href="#introducing-getitem" id="id4">Introducing __getitem__</a></li>
+<li><a class="reference internal" href="#introducing-call" id="id5">Introducing __call__</a></li>
+<li><a class="reference internal" href="#introducing-getattr" id="id6">Introducing __getattr__</a></li>
+<li><a class="reference internal" href="#introducing-setattr" id="id7">Introducing __setattr__</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#use-cases" id="id8">Use Cases</a><ul>
+<li><a class="reference internal" href="#building-hierarchical-data-structures" id="id9">Building hierarchical data structures</a></li>
+<li><a class="reference internal" href="#accessing-hierarchical-data-structures" id="id10">Accessing hierarchical data structures</a></li>
+<li><a class="reference internal" href="#operator-overloading" id="id11">Operator overloading</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#recipes" id="id12">Recipes</a><ul>
+<li><a class="reference internal" href="#html-generation" id="id13">HTML Generation</a><ul>
+<li><a class="reference internal" href="#prerequisites" id="id14">Prerequisites</a></li>
+<li><a class="reference internal" href="#steps" id="id15">Steps</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#building-tkinter-interfaces" id="id16">Building Tkinter interfaces</a><ul>
+<li><a class="reference internal" href="#id1" id="id17">Prerequisites</a></li>
+<li><a class="reference internal" href="#id2" id="id18">Steps</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#magic-method-caveats" id="id19">Magic Method Caveats</a><ul>
+<li><a class="reference internal" href="#too-much-magic-is-not-good" id="id20">Too much magic is not good</a></li>
+<li><a class="reference internal" href="#copying-objects-uses-a-lot-of-memory" id="id21">Copying objects uses a lot of memory</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="getting-started">
+<h2><a class="toc-backref" href="#id3">Getting Started</a><a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>There are far more magic methods in Python than we could ever hope to cover. However, we believe that the arithmetic and boolean magic methods are fairly intuitive to use, and so don&#8217;t deserve special attention. The really common magic methods, such as <code class="docutils literal"><span class="pre">__str__</span></code>, <code class="docutils literal"><span class="pre">__repr__</span></code>, and <code class="docutils literal"><span class="pre">__unicode__</span></code>, are already covered in any decent Python tutorial. In this short tutorial, we&#8217;ll focus on three magic methods that are often overriden in various frameworks we&#8217;ve encountered: <code class="docutils literal"><span class="pre">__getitem__</span></code>, <code class="docutils literal"><span class="pre">__call__</span></code>, and <code class="docutils literal"><span class="pre">__getattr__</span></code>.</p>
+<div class="section" id="introducing-getitem">
+<h3><a class="toc-backref" href="#id4">Introducing __getitem__</a><a class="headerlink" href="#introducing-getitem" title="Permalink to this headline">¶</a></h3>
+<p>Implementing <code class="docutils literal"><span class="pre">__getitem__</span></code> in a class allows its instances to use the <code class="docutils literal"><span class="pre">[]</span></code> (indexer) operators.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;</span><span class="si">%-15s</span><span class="s">  </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">items</span><span class="p">)</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">Test</span><span class="p">()</span>
+<span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">t</span><span class="p">[</span><span class="s">&#39;hello world&#39;</span><span class="p">]</span>
+<span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>
+<span class="n">t</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">200</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">t</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="s">&#39;z&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">t</span><span class="p">[</span><span class="nb">object</span><span class="p">()]</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;type &#39;int&#39;&gt;     1
+&lt;type &#39;str&#39;&gt;     hello world
+&lt;type &#39;tuple&#39;&gt;   (1, &#39;b&#39;, 3.0)
+&lt;type &#39;slice&#39;&gt;   slice(5, 200, 10)
+&lt;type &#39;slice&#39;&gt;   slice(&#39;a&#39;, &#39;z&#39;, 3)
+&lt;type &#39;object&#39;&gt;  &lt;object object at 0x00C10468&gt;
+</pre></div>
+</div>
+<p>Unlike some other languages, Python basically lets you pass any object into the indexer. You may be surprised that <code class="docutils literal"><span class="pre">t[1,</span> <span class="pre">'b',</span> <span class="pre">3.0]</span></code> actually parses. To the Python interpreter, that expression is equivalent to this: <code class="docutils literal"><span class="pre">t.__getitem__((1,</span> <span class="pre">'b',</span> <span class="pre">3.0))</span></code>. As you can see, the <code class="docutils literal"><span class="pre">1,</span> <span class="pre">'b',</span> <span class="pre">3.0</span></code> part is implicitly parsed as a tuple.</p>
+<p>The <code class="docutils literal"><span class="pre">t[5:200:10]</span></code> expression makes use of Python&#8217;s slice syntax. It is equivalent to this expression: <code class="docutils literal"><span class="pre">t[slice(5,</span> <span class="pre">200,</span> <span class="pre">10)]</span></code>. The</p>
+<p>The <code class="docutils literal"><span class="pre">__getitem__</span></code> magic method is usually used for list indexing, dictionary lookups, or accessing ranges of values. Considering how versatile it is, it&#8217;s probably one of Python&#8217;s most underutilized magic methods.</p>
+</div>
+<div class="section" id="introducing-call">
+<h3><a class="toc-backref" href="#id5">Introducing __call__</a><a class="headerlink" href="#introducing-call" title="Permalink to this headline">¶</a></h3>
+<p>Implementing the <code class="docutils literal"><span class="pre">__call__</span></code> magic method in a class causes its instances to become callables &#8211; in other words, those instances now behave like functions. You can use the built-in function <code class="docutils literal"><span class="pre">callable</span></code> to test if a particular object is a callable (<code class="docutils literal"><span class="pre">callable</span></code> returns <code class="docutils literal"><span class="pre">True</span></code> for functions, methods, and objects that have <code class="docutils literal"><span class="pre">__call__</span></code>).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">print</span> <span class="n">args</span>
+        <span class="k">print</span> <span class="n">kwargs</span>
+        <span class="k">print</span> <span class="s">&#39;-&#39;</span><span class="o">*</span><span class="mi">80</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">Test</span><span class="p">()</span>
+<span class="n">t</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">t</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">t</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>(1, 2, 3)
+{}
+--------------------------------------------------------------------------------
+()
+{&#39;a&#39;: 1, &#39;c&#39;: 3, &#39;b&#39;: 2}
+--------------------------------------------------------------------------------
+(4, 5, 6)
+{&#39;e&#39;: 5, &#39;d&#39;: 4, &#39;f&#39;: 6}
+--------------------------------------------------------------------------------
+</pre></div>
+</div>
+<p>You can implement the <code class="docutils literal"><span class="pre">__call__</span></code> magic method like any method or function. The only difference is that invoking it doesn&#8217;t require a name, just the parentheses.</p>
+<p>Generally, <code class="docutils literal"><span class="pre">__call__</span></code> is used whenever you want to provide a simple interface that resembles a single function, even though the actual implementation requires some storing or modification of state. For example, a method that needs to record its arguments every time it is invoked. Callable objects are also a good way to implement partial functions, though they&#8217;re not as useful for that since Python 2.5 now officially supports <a class="reference external" href="http://www.python.org/dev/peps/pep-0309/">partial function application</a>.</p>
+</div>
+<div class="section" id="introducing-getattr">
+<h3><a class="toc-backref" href="#id6">Introducing __getattr__</a><a class="headerlink" href="#introducing-getattr" title="Permalink to this headline">¶</a></h3>
+<p>Implementing <code class="docutils literal"><span class="pre">__getattr__</span></code> overrides Python&#8217;s default mechanism for member access.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="s">&#39;a&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="s">&#39;b&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">123456</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">Test</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;object variables: </span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">t</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">t</span><span class="o">.</span><span class="n">a</span>
+<span class="k">print</span> <span class="n">t</span><span class="o">.</span><span class="n">b</span>
+<span class="k">print</span> <span class="n">t</span><span class="o">.</span><span class="n">c</span>
+<span class="k">print</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>object variables: [&#39;a&#39;, &#39;b&#39;]
+a
+b
+123456
+123456
+True
+</pre></div>
+</div>
+<p>As you can see from the example above, the <code class="docutils literal"><span class="pre">__getattr__</span></code> magic method only gets invoked for attributes that are not in the <code class="docutils literal"><span class="pre">__dict__</span></code> magic attribute. Implementing <code class="docutils literal"><span class="pre">__getattr__</span></code> causes the <code class="docutils literal"><span class="pre">hasattr</span></code> built-in function to always return <code class="docutils literal"><span class="pre">True</span></code>, unless an exception is raised from within <code class="docutils literal"><span class="pre">__getattr__</span></code>.</p>
+</div>
+<div class="section" id="introducing-setattr">
+<h3><a class="toc-backref" href="#id7">Introducing __setattr__</a><a class="headerlink" href="#introducing-setattr" title="Permalink to this headline">¶</a></h3>
+<p>Although implementing <code class="docutils literal"><span class="pre">__setattr__</span></code> is not that common of a practice, we thought we&#8217;d include a discussion of it for the sake of completeness. Basically, <code class="docutils literal"><span class="pre">__setattr__</span></code> allows you to override Python&#8217;s default mechanism for member assignment.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="s">&#39;a&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="s">&#39;b&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;set </span><span class="si">%s</span><span class="s"> to </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">):</span>
+            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">Test</span><span class="p">()</span>
+<span class="n">t</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="s">&#39;z&#39;</span>
+<span class="nb">setattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="s">&#39;888&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>set a to &#39;a&#39;
+set b to &#39;b&#39;
+set c to &#39;z&#39;
+set d to &#39;888&#39;
+</pre></div>
+</div>
+<p>It might surprise you to find out that <code class="docutils literal"><span class="pre">__setattr__</span></code> is not symmetrical to <code class="docutils literal"><span class="pre">__getattr__</span></code>! In particular, <em>all</em> attribute assignments go through <code class="docutils literal"><span class="pre">__setattr__</span></code>, even for variables that are present in the <code class="docutils literal"><span class="pre">__dict__</span></code> magic variable. For this reason, we don&#8217;t recommend implementing <code class="docutils literal"><span class="pre">__setattr__</span></code>.</p>
+<p>Implementing <code class="docutils literal"><span class="pre">__setattr__</span></code> can lead to some really nasty-looking code. Because you end up writing the following statement an awful lot: <code class="docutils literal"><span class="pre">object.__setattr__(self,</span> <span class="pre">name,</span> <span class="pre">value)</span></code>. If you fine-grained control of member assignment, you are almost always better off using properties instead.</p>
+</div>
+</div>
+<div class="section" id="use-cases">
+<h2><a class="toc-backref" href="#id8">Use Cases</a><a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="building-hierarchical-data-structures">
+<h3><a class="toc-backref" href="#id9">Building hierarchical data structures</a><a class="headerlink" href="#building-hierarchical-data-structures" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://breve.twisty-industries.com/">Brevé</a> is an HTML template engine that can generate HTML using pure Python.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">html</span> <span class="p">[</span>
+    <span class="n">head</span> <span class="p">[</span>
+        <span class="n">title</span> <span class="p">[</span> <span class="s">&#39;A Brevé Template&#39;</span> <span class="p">]</span>
+    <span class="p">],</span>
+
+    <span class="n">body</span> <span class="p">[</span>
+        <span class="n">h1</span> <span class="p">[</span> <span class="s">&#39;Briefly, Brevé&#39;</span> <span class="p">],</span> <span class="n">br</span><span class="p">,</span>
+        <span class="n">div</span> <span class="p">(</span> <span class="n">style</span> <span class="o">=</span> <span class="s">&#39;text-align: center;&#39;</span> <span class="p">)</span> <span class="p">[</span>
+            <span class="n">span</span> <span class="p">[</span> <span class="s">&#39;&#39;&#39;</span>
+<span class="s">                As you can see, Brevé maps very</span>
+<span class="s">                directly to the final HTML output.</span>
+<span class="s">            &#39;&#39;&#39;</span> <span class="p">]</span>
+        <span class="p">]</span>
+    <span class="p">]</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Brevé templates have a structure that maps directly to the structure of the generated HTML. It does this by overriding the magic methods <code class="docutils literal"><span class="pre">__getitem__</span></code> and <code class="docutils literal"><span class="pre">__call__</span></code>.</p>
+</div>
+<div class="section" id="accessing-hierarchical-data-structures">
+<h3><a class="toc-backref" href="#id10">Accessing hierarchical data structures</a><a class="headerlink" href="#accessing-hierarchical-data-structures" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> is an HTML/XML parser.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">html</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">&lt;html&gt;</span>
+<span class="s">    &lt;head&gt;</span>
+<span class="s">        &lt;title&gt;Page title&lt;/title&gt;</span>
+<span class="s">    &lt;/head&gt;</span>
+<span class="s">    &lt;body&gt;</span>
+<span class="s">        &lt;p&gt;</span>
+<span class="s">            This is paragraph &lt;b&gt;one&lt;/b&gt;.</span>
+<span class="s">        &lt;/p&gt;</span>
+<span class="s">        &lt;p&gt;</span>
+<span class="s">            This is paragraph &lt;b&gt;two&lt;/b&gt;.</span>
+<span class="s">        &lt;/p&gt;</span>
+<span class="s">     &lt;/body&gt;</span>
+<span class="s">&lt;/html&gt;&quot;&quot;&quot;</span>
+
+<span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">soup</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">string</span>
+<span class="k">print</span> <span class="n">soup</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">b</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>Page title
+&lt;b&gt;one&lt;/b&gt;
+</pre></div>
+</div>
+<p>BeautifulSoup allows you to use Python&#8217;s dot syntax to drill down to the part of the HTML document you want. It does this by overriding the <code class="docutils literal"><span class="pre">__getattr__</span></code> magic method.</p>
+</div>
+<div class="section" id="operator-overloading">
+<h3><a class="toc-backref" href="#id11">Operator overloading</a><a class="headerlink" href="#operator-overloading" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://pyparsing.wikispaces.com/">Pyparsing</a> is a parsing library for simple grammars.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyparsing</span> <span class="kn">import</span> <span class="n">Word</span><span class="p">,</span> <span class="n">alphas</span>
+
+<span class="c"># define grammar</span>
+<span class="n">greet</span> <span class="o">=</span> <span class="n">Word</span><span class="p">(</span> <span class="n">alphas</span> <span class="p">)</span> <span class="o">+</span> <span class="s">&quot;,&quot;</span> <span class="o">+</span> <span class="n">Word</span><span class="p">(</span> <span class="n">alphas</span> <span class="p">)</span> <span class="o">+</span> <span class="s">&quot;!&quot;</span>
+
+<span class="n">hello</span> <span class="o">=</span> <span class="s">&quot;Hello, World!&quot;</span>
+<span class="k">print</span> <span class="n">hello</span><span class="p">,</span> <span class="s">&quot;-&gt;&quot;</span><span class="p">,</span> <span class="n">greet</span><span class="o">.</span><span class="n">parseString</span><span class="p">(</span> <span class="n">hello</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><div class="highlight"><pre>Hello, World! -&gt; [&#39;Hello&#39;, &#39;,&#39;, &#39;World&#39;, &#39;!&#39;]
+</pre></div>
+</div>
+<p>Pyparsing allows you to use Python&#8217;s arithmetic operators to define the relationships between the tokens. Some of the arithmetic operators it overrides are: <code class="docutils literal"><span class="pre">+</span></code>, <code class="docutils literal"><span class="pre">^</span></code>, <code class="docutils literal"><span class="pre">|</span></code>.</p>
+<p>Pyparsing is an unorthodox use of operator overloading. Generally, operator overloading is most useful when dealing with numerical types or types which are collections of numeric data. For example, in the standard library we have a <code class="docutils literal"><span class="pre">datetime</span></code> class that overloads <code class="docutils literal"><span class="pre">-</span></code>, <code class="docutils literal"><span class="pre">+</span></code>, <code class="docutils literal"><span class="pre">==</span></code>, <code class="docutils literal"><span class="pre">&gt;</span></code>, <code class="docutils literal"><span class="pre">&lt;</span></code>, etc.</p>
+</div>
+</div>
+<div class="section" id="recipes">
+<h2><a class="toc-backref" href="#id12">Recipes</a><a class="headerlink" href="#recipes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="html-generation">
+<h3><a class="toc-backref" href="#id13">HTML Generation</a><a class="headerlink" href="#html-generation" title="Permalink to this headline">¶</a></h3>
+<p>Most approaches to HTML generation involve string interpolation or the use of a template language.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">Template</span>
+
+<span class="n">greeting</span> <span class="o">=</span> <span class="s">&#39;Salutations&#39;</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Abdullah&#39;</span>
+<span class="n">imgSrc</span> <span class="o">=</span> <span class="s">&#39;http://www.google.com/intl/en_ALL/images/logo.gif&#39;</span>
+<span class="n">link</span> <span class="o">=</span> <span class="s">&#39;http://feihonghsu.blogspot.com&#39;</span>
+
+<span class="n">html</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">&lt;div&gt;</span>
+<span class="s">    &lt;h1&gt;</span>
+<span class="s">        ${greeting}, ${name}!</span>
+<span class="s">    &lt;/h1&gt;</span>
+<span class="s">    &lt;p&gt;</span>
+<span class="s">        This is an image &lt;img src=&quot;${imgSrc}&quot; /&gt;</span>
+<span class="s">    &lt;/p&gt;</span>
+<span class="s">    &lt;p&gt;</span>
+<span class="s">        Try clicking on the &lt;a href=&quot;${link}&quot;&gt;link&lt;/a&gt; right now.</span>
+<span class="s">    &lt;/p&gt;</span>
+<span class="s">&lt;/div&gt;&quot;&quot;&quot;</span>
+
+<span class="n">html</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">html</span><span class="p">)</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
+<span class="k">print</span> <span class="n">html</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-html"><div class="highlight"><pre><span class="nt">&lt;div&gt;</span>
+    <span class="nt">&lt;h1&gt;</span>
+        Salutations, Abdullah!
+    <span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;p&gt;</span>
+        This is an image <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;http://www.google.com/intl/en_ALL/images/logo.gif&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p&gt;</span>
+        Try clicking on the <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;http://feihonghsu.blogspot.com&quot;</span><span class="nt">&gt;</span>link<span class="nt">&lt;/a&gt;</span> right now.
+    <span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+</div>
+<p>In this recipe, we&#8217;ll show how to implement the core part of Brevé. When you&#8217;ve done that you can write your HTML generation code in pure Python:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">greeting</span> <span class="o">=</span> <span class="s">&#39;Salutations&#39;</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Abdullah&#39;</span>
+<span class="n">imgSrc</span> <span class="o">=</span> <span class="s">&#39;http://www.google.com/intl/en_ALL/images/logo.gif&#39;</span>
+<span class="n">link</span> <span class="o">=</span> <span class="s">&#39;http://feihonghsu.blogspot.com&#39;</span>
+
+<span class="n">page</span> <span class="o">=</span> <span class="n">div</span> <span class="p">[</span>
+    <span class="n">h1</span> <span class="p">[</span> <span class="n">greeting</span><span class="p">,</span> <span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="n">name</span> <span class="p">],</span>
+    <span class="n">p</span> <span class="p">[</span>
+        <span class="s">&#39;This is an image &#39;</span><span class="p">,</span>
+        <span class="n">img</span><span class="p">(</span><span class="n">src</span><span class="o">=</span><span class="n">imgSrc</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">p</span> <span class="p">[</span>
+        <span class="s">&#39;Try clicking on the &#39;</span><span class="p">,</span>
+        <span class="n">a</span><span class="p">(</span><span class="n">href</span><span class="o">=</span><span class="n">link</span><span class="p">)[</span><span class="s">&#39;link&#39;</span><span class="p">],</span>
+        <span class="s">&#39; right now.&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+<span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>But we&#8217;re going to tweak things a bit so that you can create your own &#8220;custom&#8221; tags. This will allow you to create your own internal DSL for creating web interfaces using the <a class="reference external" href="http://dojotoolkit.org/">Dojo</a> DHTML toolkit.</p>
+<div class="section" id="prerequisites">
+<h4><a class="toc-backref" href="#id14">Prerequisites</a><a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference external" href="https://docs.python.org/2/library/copy.html#copy.deepcopy">copy.deepcopy</a> function</li>
+</ul>
+</div>
+<div class="section" id="steps">
+<h4><a class="toc-backref" href="#id15">Steps</a><a class="headerlink" href="#steps" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference internal" href="html/step0.html"><em>HTML 0</em></a></li>
+<li><a class="reference internal" href="html/step1.html"><em>HTML 1</em></a></li>
+<li><a class="reference internal" href="html/step2.html"><em>HTML 2</em></a></li>
+<li><a class="reference internal" href="html/step3.html"><em>HTML 3</em></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="building-tkinter-interfaces">
+<h3><a class="toc-backref" href="#id16">Building Tkinter interfaces</a><a class="headerlink" href="#building-tkinter-interfaces" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://docs.python.org/lib/module-Tkinter.html">Tkinter</a> is the default GUI toolkit for Python. It&#8217;s great! Well, it&#8217;s not great, per se, but it ships with Python, so it&#8217;s probably sitting on your system somewhere, ready to be used. So let&#8217;s use it! Here&#8217;s an example of a basic GUI built using Tkinter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Tkinter</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">root</span> <span class="o">=</span> <span class="n">Tk</span><span class="p">()</span>
+<span class="n">root</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&#39;A Tkinter Example&#39;</span><span class="p">)</span>
+
+<span class="n">frame</span> <span class="o">=</span> <span class="n">Frame</span><span class="p">()</span>
+<span class="n">frame</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+<span class="n">Button</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s">&#39;One&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="n">TOP</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">Button</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s">&#39;Two&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="n">TOP</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">Button</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s">&#39;Three&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="n">TOP</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">frame2</span> <span class="o">=</span> <span class="n">Frame</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+<span class="n">frame2</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="n">TOP</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="n">Button</span><span class="p">(</span><span class="n">frame2</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s">&#39;Apple&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">padx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="n">LEFT</span><span class="p">)</span>
+<span class="n">Button</span><span class="p">(</span><span class="n">frame2</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s">&#39;Banana&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">padx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="n">LEFT</span><span class="p">)</span>
+<span class="n">Button</span><span class="p">(</span><span class="n">frame2</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s">&#39;Cranberry&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">padx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="n">LEFT</span><span class="p">)</span>
+
+<span class="n">Button</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s">&#39;Durian&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="n">BOTTOM</span><span class="p">)</span>
+
+<span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This is what you should see on your screen when you run the above code:</p>
+<img alt="../_images/tkinter-screenshot1.png" src="../_images/tkinter-screenshot1.png" />
+<p>I know you&#8217;re thinking it, so I&#8217;ll just go ahead and blurt it out: &#8220;Man, Tkinter is ugly&#8221;. OK, now that that&#8217;s out of the way, we can move on. One of the things you might have observed while reading the example above is that doing layout in Tkinter is repetitive and no fun. The code is flat and doesn&#8217;t give you any visual clues concerning the appearance of the resulting GUI. But using magic methods, we can rectify this sad state of affairs!</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">frame</span> <span class="o">=</span> <span class="n">VFrame</span> <span class="p">[</span>
+    <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;One&#39;</span><span class="p">),</span>
+    <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Two&#39;</span><span class="p">),</span>
+    <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Tree&#39;</span><span class="p">),</span>
+
+    <span class="n">HFrame</span> <span class="p">[</span>
+        <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Apple&#39;</span><span class="p">),</span>
+        <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Banana&#39;</span><span class="p">),</span>
+        <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Cranberry&#39;</span><span class="p">),</span>
+    <span class="p">],</span>
+
+    <span class="n">Button</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s">&#39;Durian&#39;</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">frame</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&#39;A Cool Tkinter Example&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The resulting code not only looks niftier, but the nested structure of it helps you to visualize the GUI that you&#8217;ll get when you run this code! If you&#8217;re into that sort of thing...</p>
+<div class="section" id="id1">
+<h4><a class="toc-backref" href="#id17">Prerequisites</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>A <a class="reference external" href="http://effbot.org/tkinterbook/tkinter-index.htm">basic familiarity with Tkinter</a></li>
+<li><a class="reference external" href="https://docs.python.org/2/library/copy.html#copy.deepcopy">copy.deepcopy</a> function</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h4><a class="toc-backref" href="#id18">Steps</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><a class="reference internal" href="tkinter/step0.html"><em>Tkinter 0</em></a></li>
+<li><a class="reference internal" href="tkinter/step1.html"><em>Tkinter 1</em></a></li>
+<li><a class="reference internal" href="tkinter/step2.html"><em>Tkinter 2</em></a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="magic-method-caveats">
+<h2><a class="toc-backref" href="#id19">Magic Method Caveats</a><a class="headerlink" href="#magic-method-caveats" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="too-much-magic-is-not-good">
+<h3><a class="toc-backref" href="#id20">Too much magic is not good</a><a class="headerlink" href="#too-much-magic-is-not-good" title="Permalink to this headline">¶</a></h3>
+<p>We believe that magic methods are an awesome tool for creating wrapper libraries for commonly-used libraries that have cumbersome APIs. The wrapper library can help you reduce line count and increase clarity. However, be careful not to abstract the underlying interface too much. The temptation can be great, but remember that the more abstraction you have, the leakier it can get.</p>
+</div>
+<div class="section" id="copying-objects-uses-a-lot-of-memory">
+<h3><a class="toc-backref" href="#id21">Copying objects uses a lot of memory</a><a class="headerlink" href="#copying-objects-uses-a-lot-of-memory" title="Permalink to this headline">¶</a></h3>
+<p>You might have noticed that we used the <code class="docutils literal"><span class="pre">copy.deepcopy</span></code> function quite a bit when we implemented <code class="docutils literal"><span class="pre">__call__</span></code> and <code class="docutils literal"><span class="pre">__getitem__</span></code>. It&#8217;s common to create a lot of objects when using these kinds of techniques. But after the HTML has been generated, or the widgets have been created, your tag objects have lost their usefulness. If you&#8217;re not careful about how you manage your references, these tag objects might keep accumulating throughout the duration of your program, leading to massive memory usage.</p>
+<p><a class="reference internal" href="exercises.html"><em>Magic Method Exercises</em></a></p>
+<p><a class="reference internal" href="../index.html"><em>Go Back</em></a></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../metaclass/index.html" class="btn btn-neutral" title="Metaclasses" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/tutorial.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
