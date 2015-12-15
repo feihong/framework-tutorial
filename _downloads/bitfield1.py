@@ -8,7 +8,7 @@ class __bitproperties__(type):
             def getproperty(enum):
                 def get(self):
                     return bool(self.style & enum)
-                
+
                 def set(self, v):
                     if v:
                         self.style = self.style | enum
@@ -38,9 +38,6 @@ print w.style               # 5
 
 w.transparent = True
 print w.style               # 21
-
-w.sunken = False
-print w.style               # 17
 
 w.sunken = False
 print w.style               # 17

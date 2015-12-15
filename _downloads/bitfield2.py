@@ -11,12 +11,12 @@ class __bitproperties__(type):
     def __new__(meta, classname, bases, classDict):
         bitprops = (item for item in classDict.items()
                     if isinstance(item[1], bit_property))
-        
+
         for name, bitprop in bitprops:
             def getproperty(enum):
                 def get(self):
                     return bool(self.style & enum)
-                
+
                 def set(self, v):
                     if v:
                         self.style = self.style | enum
@@ -50,9 +50,6 @@ print w.style               # 5
 
 w.transparent_background = True
 print w.style               # 21
-
-w.sunken_border = False
-print w.style               # 17
 
 w.sunken_border = False
 print w.style               # 17
