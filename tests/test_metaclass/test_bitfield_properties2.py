@@ -1,5 +1,5 @@
 """
-    >>> import bitfield_properties2
+    >>> import bitfield2
     1
     5
     21
