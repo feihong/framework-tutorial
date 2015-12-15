@@ -62,6 +62,9 @@ livehtml:
 publish:
 	ghp-import -n -p $(BUILDDIR)/html
 
+test:
+	nosetests --with-doctest --doctest-tests
+
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
 	@echo

@@ -1,3 +1,4 @@
 ghp-import
+nose
 Sphinx
 sphinx-autobuild
