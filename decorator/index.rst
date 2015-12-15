@@ -412,9 +412,7 @@ In the above example, we bind the ``onselect`` function to the ``ListboxSelect``
 Prerequisites
 `````````````
 - closures_
-- A `basic familiarity`_ with Tkinter
-
-.. _basic familiarity: http://effbot.org/tkinterbook/tkinter-index.htm#introduction
+- A `basic familiarity with Tkinter`_
 
 Steps
 `````

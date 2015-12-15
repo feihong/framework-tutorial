@@ -44,6 +44,7 @@ rst_epilog = """
 
 .. _property function: https://docs.python.org/2/library/functions.html#property
 .. _closures: http://www.shutupandship.com/2012/01/python-closures-explained.html
+.. _basic familiarity with Tkinter: http://effbot.org/tkinterbook/tkinter-index.htm
 
 """
 
